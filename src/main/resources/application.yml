@@ -1,0 +1,28 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:h2:file:./data/db;DB_CLOSE_DELAY=-1;AUTO_SERVER=FALSE
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: update
+  h2:
+    console:
+      enabled: true
+
+app:
+  security:
+    api-key: "changeme"
+    rate-limit-action: 50
+    rate-limit-wrong-api-key: 1
+
+  public:
+    uploaded-files: "http://localhost:8080/share/u/"
+    shortened-urls: "http://localhost:8080/share/s/"
+
+  file:
+    upload-directory: "./uploads/"
