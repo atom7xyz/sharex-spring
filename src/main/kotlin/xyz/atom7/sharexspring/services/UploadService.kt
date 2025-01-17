@@ -44,7 +44,7 @@ class UploadService(
                 Files.copy(it, path)
             }
 
-            ResponseEntity("File uploaded: $uploadedFilesPath$fileName", HttpStatus.OK)
+            ResponseEntity("$uploadedFilesPath$fileName", HttpStatus.OK)
         }
         catch (e: Exception) {
             ResponseEntity("Failed to upload file: ${e.message}", HttpStatus.INTERNAL_SERVER_ERROR)
