@@ -30,7 +30,10 @@ class ApiKeyFilter(
         if (validApiKey == HEADER_DEFAULT) {
             div(LogLevel.WARN)
             print(LogLevel.WARN, "API Key has default value!")
-            print(LogLevel.WARN, "For security reasons, it is recommended to set a unique API key in the config: `app.api-key`")
+            print(LogLevel.WARN,
+                "For security reasons, it is recommended to set a unique API key " +
+                        "in the config: `app.security.api-key`"
+            )
             div(LogLevel.WARN)
         }
     }
