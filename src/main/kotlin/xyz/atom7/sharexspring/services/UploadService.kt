@@ -18,9 +18,15 @@ class UploadService(
     private val uploadDirectory: String,
 
     @Value("\${app.public.uploaded-files}")
-    private val uploadedFilesPath: String
-)
-{
+    private val uploadedFilesPath: String,
+
+    @Value("\${app.limits.file-uploader.generated-name-length}")
+    private val limitFileNameLength: Int,
+
+    @Value("\${app.limits.file-uploader.size}")
+    private val limitFileSizeKB: Long
+) {
+
     init {
         val path = Paths.get(uploadDirectory)
 
@@ -29,15 +35,25 @@ class UploadService(
         }
     }
 
+    val limitFileSizeInBytes: Long
+        get() = limitFileSizeKB * 1024
+
     fun uploadFile(file: MultipartFile): ResponseEntity<String>
     {
         if (file.isEmpty) {
             return ResponseEntity("File is empty?!", HttpStatus.BAD_REQUEST)
         }
 
+        if (limitFileSizeKB != -1L && file.size > limitFileSizeInBytes) {
+            return ResponseEntity(
+                "File is too big! (size: ${(file.size / 1024)}KB / max: ${limitFileSizeKB}KB)",
+                HttpStatus.BAD_REQUEST
+            )
+        }
+
         return try {
             val fileExtension = getFileExtension(file.originalFilename)
-            val path = generateUniqueFileName(8, fileExtension) // 218_340_105_584_896 different possible URLs
+            val path = generateUniqueFileName(limitFileNameLength, fileExtension)
             val fileName = path.fileName.toString()
 
             file.inputStream.use {

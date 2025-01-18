@@ -14,7 +14,10 @@ class UrlShortenerService(
     private val urlRepository: UrlRepository,
 
     @Value("\${app.public.shortened-urls}")
-    private val shortenedUrlsPath: String
+    private val shortenedUrlsPath: String,
+
+    @Value("\${app.limits.url-shortener.generated-name-length}")
+    private val limitUrlNameLength: Int
 ) {
 
     @Cacheable(value = ["originUrls"], key = "#originUrl")
@@ -28,7 +31,7 @@ class UrlShortenerService(
 
         val shortenedUrl = ShortenedUrl(
             originUrl = originUrl,
-            targetUrl = findNonOccupiedUrl(4) // 14_776_336 different possible URLs
+            targetUrl = findNonOccupiedUrl(limitUrlNameLength)
         )
 
         urlRepository.save(shortenedUrl)

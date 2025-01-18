@@ -26,3 +26,21 @@ app:
 
   file:
     upload-directory: "./uploads/"
+
+  # Generated names table:
+  # (length : number of unique entries)
+  # 4       : 14,776,336
+  # 6       : 56,800,235,584
+  # 8       : 218,340,105,584,896
+  # 10      : 839,299,365,868,340,224
+  # 12      : 3,226,266,762,397,899,821,056
+  # 14      : 12,401,769,434,657,526,912,139,264
+  # 16      : 47,672,401,706,823,533,450,263,330,816
+  limits:
+    file-uploader:
+      generated-name-length: 8
+      # `size` is in KBytes
+      # value of `-1` does not impose any limitations
+      size: -1
+    url-shortener:
+      generated-name-length: 4
