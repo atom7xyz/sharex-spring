@@ -21,7 +21,6 @@ class PublicController(
     private val uploadService: UploadService,
     private val urlShortenerService: UrlShortenerService
 ) {
-
     @GetMapping("/u/{file}")
     fun getFile(@PathVariable file: String): Any
     {

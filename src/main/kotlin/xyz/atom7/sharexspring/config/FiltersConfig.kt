@@ -9,7 +9,6 @@ import org.springframework.web.filter.ForwardedHeaderFilter
 import xyz.atom7.sharexspring.filters.ApiKeyFilter
 import xyz.atom7.sharexspring.filters.RateLimitFilter
 
-
 @Configuration
 class FiltersConfig
 {
@@ -43,7 +42,7 @@ class FiltersConfig
         val registration = FilterRegistrationBean(filter)
         registration.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType.ASYNC, DispatcherType.ERROR)
         registration.order = Ordered.HIGHEST_PRECEDENCE
-        registration.urlPatterns = listOf("*")
+        registration.addUrlPatterns("*")
         return registration
     }
 

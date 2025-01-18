@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
+import xyz.atom7.sharexspring.utils.IpActionsMap
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
@@ -16,10 +17,9 @@ class RateLimiterService(
 
     @Value("\${app.security.rate-limit-wrong-api-key}")
     val rateLimitWrongApiKey: Int
-)
-{
-    private val actionRequests: MutableMap<String, AtomicInteger> = ConcurrentHashMap()
-    private val wrongApiKeyRequests: MutableMap<String, AtomicInteger> = ConcurrentHashMap()
+) {
+    private val actionRequests: IpActionsMap = ConcurrentHashMap()
+    private val wrongApiKeyRequests: IpActionsMap = ConcurrentHashMap()
 
     fun hasReachedRateLimit(address: String, rateLimitType: RateLimitType): Boolean
     {
@@ -46,13 +46,13 @@ class RateLimiterService(
         wrongApiKeyRequests.clear()
     }
 
-    private fun <T : MutableMap<String, AtomicInteger>> incrEntry(address: String, map: T)
+    private fun <T : IpActionsMap> incrEntry(address: String, map: T)
     {
         map.putIfAbsent(address, AtomicInteger(0))
         map[address]!!.getAndIncrement()
     }
 
-    private fun <T : MutableMap<String, AtomicInteger>> checkRateLimit(address: String, limit: Int, map: T): Boolean
+    private fun <T : IpActionsMap> checkRateLimit(address: String, limit: Int, map: T): Boolean
     {
         map.putIfAbsent(address, AtomicInteger(1))
         return map[address]!!.get() > limit

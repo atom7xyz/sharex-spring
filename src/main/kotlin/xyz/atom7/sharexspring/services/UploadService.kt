@@ -37,7 +37,7 @@ class UploadService(
 
         return try {
             val fileExtension = getFileExtension(file.originalFilename)
-            val path = generateUniqueFileName(fileExtension)
+            val path = generateUniqueFileName(8, fileExtension) // 218_340_105_584_896 different possible URLs
             val fileName = path.fileName.toString()
 
             file.inputStream.use {
@@ -63,20 +63,20 @@ class UploadService(
         return filePath
     }
 
-    private fun generateFileName(fileExtension: String): Path
+    private fun generateFileName(length: Int, fileExtension: String): Path
     {
-        val fileName = generateRandomString(16) + "." + fileExtension
+        val fileName = generateRandomString(length) + "." + fileExtension
         val filePath = Paths.get(uploadDirectory, fileName)
 
         return filePath
     }
 
-    private fun generateUniqueFileName(fileExtension: String): Path
+    private fun generateUniqueFileName(length: Int, fileExtension: String): Path
     {
-        var generated = generateFileName(fileExtension)
+        var generated = generateFileName(length, fileExtension)
 
         while (Files.exists(generated)) {
-            generated = generateFileName(fileExtension)
+            generated = generateFileName(length, fileExtension)
         }
 
         return generated

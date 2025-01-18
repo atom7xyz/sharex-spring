@@ -1,6 +1,7 @@
 package xyz.atom7.sharexspring.services
 
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
@@ -14,9 +15,9 @@ class UrlShortenerService(
 
     @Value("\${app.public.shortened-urls}")
     private val shortenedUrlsPath: String
-)
-{
+) {
 
+    @Cacheable(value = ["originUrls"], key = "#originUrl")
     fun shortenUrl(originUrl: String): ResponseEntity<String>
     {
         val urlFound = urlRepository.findShortenedUrlByOriginUrl(originUrl)
@@ -27,7 +28,7 @@ class UrlShortenerService(
 
         val shortenedUrl = ShortenedUrl(
             originUrl = originUrl,
-            targetUrl = findNonOccupiedUrl(6)
+            targetUrl = findNonOccupiedUrl(4) // 14_776_336 different possible URLs
         )
 
         urlRepository.save(shortenedUrl)
@@ -35,6 +36,7 @@ class UrlShortenerService(
         return ResponseEntity.ok(shortenedUrlsPath + shortenedUrl.targetUrl)
     }
 
+    @Cacheable(value = ["targetUrls"], key = "#targetUrl")
     @Throws(ResponseStatusException::class)
     fun getUrl(targetUrl: String): ShortenedUrl?
     {
@@ -49,7 +51,7 @@ class UrlShortenerService(
 
         try
         {
-            while (getUrl(generated) != null) {
+            while (getUrl(generated) != null) { // bypass of @Cacheable is intended, no cache pollution!
                 generated = generateRandomString(length)
             }
         }
