@@ -1,21 +1,11 @@
 services:
 
-  sharex-spring-build:
-    image: gradle:jdk21-alpine
-    working_dir: /app
-    volumes:
-      - .:/app
-      - ./build/libs:/app/build/libs
-    command: [ "./gradlew", "bootJar" ]
-
   sharex-spring:
     image: amazoncorretto:21-alpine-jdk
     container_name: sharex-spring
-    depends_on:
-      - sharex-spring-build
     working_dir: /app
     volumes:
-      - ./app:/app
+      - .:/app
     environment:
       - APP_SECURITY_API_KEY=changeme
       - APP_RATE_LIMIT_ACTION=50
@@ -32,3 +22,9 @@ services:
     command: ["java", "-jar", "sharex-spring-0.0.1-SNAPSHOT.jar"]
     restart: unless-stopped
     user: "1000:1000"
+    #networks:
+    #  - shared-nginx
+
+#networks:
+#  shared-nginx:
+#    external: true
