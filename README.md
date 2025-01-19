@@ -1,7 +1,7 @@
 
 ## sharex-spring
 
-ShareX Spring Boot server with support for: image, text and file upload (and retrieval), URL shortener.
+Self-hosted ShareX server with support for image, text, file uploads, and URL shortening.
 
 ---
 
