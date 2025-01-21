@@ -1,22 +1,21 @@
 package xyz.atom7.sharexspring.entities
 
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
+import jakarta.persistence.*
 
 @Entity
-class ShortenedUrl(
+data class ShortenedUrl(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null,
+    val id: Long = 0,
 
+    @Column(nullable = false, unique = true)
     val originUrl: String,
 
+    @Column(nullable = false, unique = true)
     val targetUrl: String
 ) {
 
-    constructor() : this(null, "", "")
+    constructor() : this(0, "", "")
 
     override fun toString(): String {
         return "UrlEntity(id=$id, originUrl='$originUrl', targetUrl='$targetUrl')"

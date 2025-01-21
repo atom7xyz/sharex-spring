@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.annotation.Order
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import xyz.atom7.sharexspring.logging.AppLogger.div
 import xyz.atom7.sharexspring.logging.AppLogger.print
@@ -52,7 +53,7 @@ class ApiKeyFilter(
         }
 
         rateLimiterService.signHit(address, RateLimitType.API_KEY)
-        httpResponse.status = HttpServletResponse.SC_UNAUTHORIZED
+        httpResponse.status = HttpStatus.UNAUTHORIZED.value()
         httpResponse.writer.write("Invalid or missing API key")
     }
 }

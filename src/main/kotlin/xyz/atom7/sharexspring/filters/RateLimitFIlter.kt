@@ -16,7 +16,6 @@ import xyz.atom7.sharexspring.services.RateLimiterService
 @Order(0)
 class RateLimitFilter(private val rateLimiterService: RateLimiterService) : Filter
 {
-
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain)
     {
         val httpRequest = request as HttpServletRequest
@@ -37,5 +36,4 @@ class RateLimitFilter(private val rateLimiterService: RateLimiterService) : Filt
         httpResponse.status = HttpStatus.TOO_MANY_REQUESTS.value()
         httpResponse.writer.write("Rate limit exceeded. Try again later.")
     }
-
 }
