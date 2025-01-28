@@ -14,7 +14,7 @@ class CacheConfig
     fun caffeineConfig(): Caffeine<Any, Any>
     {
         return Caffeine.newBuilder()
-            .expireAfterAccess(1, TimeUnit.HOURS)
+            .expireAfterWrite(1, TimeUnit.HOURS)
             .maximumSize(100)
     }
 
@@ -23,6 +23,7 @@ class CacheConfig
     {
         val cacheManager = CaffeineCacheManager()
         cacheManager.setCaffeine(caffeine)
+        cacheManager.setCacheNames(setOf("originUrls", "targetUrls"))
         return cacheManager
     }
 }

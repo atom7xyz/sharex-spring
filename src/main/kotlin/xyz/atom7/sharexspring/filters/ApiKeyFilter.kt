@@ -15,6 +15,7 @@ import xyz.atom7.sharexspring.logging.AppLogger.print
 import xyz.atom7.sharexspring.logging.LogLevel
 import xyz.atom7.sharexspring.services.RateLimitType
 import xyz.atom7.sharexspring.services.RateLimiterService
+import java.security.MessageDigest
 
 @Component
 @Order(1)
@@ -24,8 +25,10 @@ class ApiKeyFilter(
     private val rateLimiterService: RateLimiterService
 ) : Filter
 {
-    private val HEADER: String = "X-API-KEY"
-    private val HEADER_DEFAULT: String = "changeme"
+    companion object {
+        const val HEADER: String = "X-API-KEY"
+        const val HEADER_DEFAULT: String = "changeme"
+    }
 
     init {
         if (validApiKey == HEADER_DEFAULT) {
@@ -43,17 +46,21 @@ class ApiKeyFilter(
     {
         val httpRequest = request as HttpServletRequest
         val httpResponse = response as HttpServletResponse
+        val address = request.remoteAddr
 
-        val apiKey = httpRequest.getHeader(HEADER)
-        val address = httpRequest.remoteAddr
-
-        if (apiKey == validApiKey) {
-            chain.doFilter(request, response)
+        val apiKey = httpRequest.getHeader(HEADER)?.trim()
+        
+        if (apiKey.isNullOrEmpty()) {
+            httpResponse.sendError(HttpStatus.UNAUTHORIZED.value(), "Missing API key")
+            return
+        }
+        
+        if (!MessageDigest.isEqual(apiKey.toByteArray(), validApiKey.toByteArray())) {
+            rateLimiterService.signHit(address, RateLimitType.API_KEY)
+            httpResponse.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized")
             return
         }
 
-        rateLimiterService.signHit(address, RateLimitType.API_KEY)
-        httpResponse.status = HttpStatus.UNAUTHORIZED.value()
-        httpResponse.writer.write("Invalid or missing API key")
+        chain.doFilter(request, response)
     }
 }

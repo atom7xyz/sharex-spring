@@ -3,11 +3,13 @@ package xyz.atom7.sharexspring.services
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.ResponseEntity
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
 import xyz.atom7.sharexspring.entities.ShortenedUrl
 import xyz.atom7.sharexspring.repositories.UrlRepository
 import xyz.atom7.sharexspring.utils.generateRandomString
+import java.net.URL
 
 @Service
 class UrlShortenerService(
@@ -23,6 +25,10 @@ class UrlShortenerService(
     @Cacheable(value = ["originUrls"], key = "#originUrl")
     fun shortenUrl(originUrl: String): ResponseEntity<String>
     {
+        if (!isValidUrl(originUrl)) {
+            return ResponseEntity("Invalid URL format", HttpStatus.BAD_REQUEST)
+        }
+
         val urlFound = urlRepository.findShortenedUrlByOriginUrl(originUrl)
 
         if (urlFound.isPresent) {
@@ -61,6 +67,15 @@ class UrlShortenerService(
         catch (_: Exception) { }
 
         return generated
+    }
+
+    private fun isValidUrl(url: String): Boolean {
+        return try {
+            URL(url).toURI()
+            true
+        } catch (e: Exception) {
+            false
+        }
     }
 
 }

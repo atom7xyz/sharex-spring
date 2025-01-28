@@ -23,17 +23,15 @@ class RateLimitFilter(private val rateLimiterService: RateLimiterService) : Filt
 
         val address = httpRequest.remoteAddr
 
-        rateLimiterService.signHit(address, RateLimitType.ACTION)
-
         val actionLimitExceeded = rateLimiterService.hasReachedRateLimit(address, RateLimitType.ACTION)
         val wrongApiKeyLimitExceeded = rateLimiterService.hasReachedRateLimit(address, RateLimitType.API_KEY)
 
         if (!actionLimitExceeded && !wrongApiKeyLimitExceeded) {
+            rateLimiterService.signHit(address, RateLimitType.ACTION)
             chain.doFilter(request, response)
             return
         }
 
-        httpResponse.status = HttpStatus.TOO_MANY_REQUESTS.value()
-        httpResponse.writer.write("Rate limit exceeded. Try again later.")
+        httpResponse.sendError(HttpStatus.TOO_MANY_REQUESTS.value(), "Rate limit exceeded. Try again later.")
     }
 }

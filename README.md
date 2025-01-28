@@ -1,7 +1,21 @@
+![Java](https://img.shields.io/badge/Java-17%2B-orange)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-green)
+![License](https://img.shields.io/github/license/atom7xyz/sharex-spring)
 
-## sharex-spring
+# sharex-spring
 
-Self-hosted ShareX server with support for image, text, file uploads, and URL shortening.
+A robust and efficient self-hosted server for ShareX, supporting image uploads, text sharing, file hosting, and URL shortening.
+
+## Features
+- 🚀 Modern Spring Boot server implementation
+- 🔒 Secure API key authentication
+- 🛡️ Built-in rate limiting protection
+- 📁 File upload support with customizable limits
+- 🔗 URL shortening service
+- 📝 Text/code sharing capabilities
+- 🐳 Easy deployment with Docker
+- ⚡ Efficient caching system
+- 🔧 Configurable via environment variables
 
 ---
 
@@ -101,11 +115,11 @@ To compile and run your `sharex-spring` instance using Docker Compose, follow th
 
 3. **Retrieve dependencies and compile the project:**
    ```shell
-   chmod +x ./gradlew && /
-   ./gradlew bootJar -Pjava.version=21
+   chmod +x ./gradlew && \
+   ./gradlew bootJar -Pjava.version=17
    ```
 
-   > **Note:** You can modify the `java.version` flag if you need a different Java version.
+   > **Note:** Supports Java versions 17-23. Default is Java 21 if not specified.
 
 4. **Move the compiled JAR file to a convenient directory:**
 
@@ -182,10 +196,10 @@ To run your `sharex-spring` instance from source, follow these steps:
 
    ```shell
    chmod +x ./gradlew && \
-   ./gradlew bootJar -Pjava.version=21
+   ./gradlew bootJar -Pjava.version=17
    ```
 
-   > **Note:** You can modify the `java.version` flag if you need a different Java version.
+   > **Note:** Supports Java versions 17-23. Default is Java 21 if not specified.
 
 3. **Move the compiled JAR file to a convenient directory:**
 
@@ -266,3 +280,6 @@ To run your `sharex-spring` instance from source, follow these steps:
    ```
 
 ---
+
+## License
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
