@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
 import org.springframework.mock.web.MockMultipartFile
@@ -18,9 +19,13 @@ class UploadServiceTest
     @TempDir
     lateinit var tempDir: Path
     
-    private val uploadedFilesPath = "http://localhost:9007/u/"
-    private val limitFileNameLength = 8
-    private val limitFileSizeKB = 1024L
+    @Value("\${app.public.uploaded-files}")
+    private val uploadedFilesPath: String = ""
+
+    @Value("\${app.limits.file-uploader.generated-name-length}")
+    private val limitFileNameLength: Int = 0
+
+    private val limitFileSizeKB: Long = 1024
 
     @BeforeEach
     fun setup()

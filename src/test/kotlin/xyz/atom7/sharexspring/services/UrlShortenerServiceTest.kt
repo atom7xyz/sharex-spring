@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
 import xyz.atom7.sharexspring.entities.ShortenedUrl
@@ -17,8 +18,11 @@ class UrlShortenerServiceTest
     private lateinit var urlShortenerService: UrlShortenerService
     private lateinit var urlRepository: UrlRepository
 
-    private val shortenedUrlsPath = "http://localhost:9007/s/"
-    private val limitUrlNameLength = 4
+    @Value("\${app.public.shortened-urls}")
+    private val shortenedUrlsPath: String = ""
+
+    @Value("\${app.limits.url-shortener.generated-name-length}")
+    private val limitUrlNameLength: Int = 0
 
     @BeforeEach
     fun setup()
