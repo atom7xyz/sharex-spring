@@ -1,6 +1,7 @@
-![Java](https://img.shields.io/badge/Java-17%2B-orange)
-![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-green)
-![License](https://img.shields.io/github/license/atom7xyz/sharex-spring)
+![Java](https://img.shields.io/badge/Java-17%2B-216B00?style=for-the-badge)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.4+-216B00?style=for-the-badge)
+![License](https://img.shields.io/github/license/atom7xyz/sharex-spring?style=for-the-badge&color=7469B6)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/atom7xyz/sharex-spring/total?style=for-the-badge&color=155E95)
 
 # sharex-spring
 
