@@ -9,7 +9,7 @@ import org.springframework.web.server.ResponseStatusException
 import xyz.atom7.sharexspring.entities.ShortenedUrl
 import xyz.atom7.sharexspring.repositories.UrlRepository
 import xyz.atom7.sharexspring.utils.generateRandomString
-import java.net.URL
+import java.net.URI
 
 @Service
 class UrlShortenerService(
@@ -69,13 +69,10 @@ class UrlShortenerService(
         return generated
     }
 
-    private fun isValidUrl(url: String): Boolean {
-        return try {
-            URL(url).toURI()
-            true
-        } catch (e: Exception) {
-            false
+    private fun isValidUrl(url: String): Boolean = runCatching {
+        URI.create(url).let { uri ->
+            uri.scheme?.lowercase() in listOf("http", "https") && uri.host != null
         }
-    }
+    }.getOrDefault(false)
 
 }

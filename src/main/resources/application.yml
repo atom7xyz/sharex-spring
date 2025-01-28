@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 9007
 
 spring:
   datasource:
@@ -21,8 +21,8 @@ app:
     rate-limit-wrong-api-key: 1
 
   public:
-    uploaded-files: "http://localhost:8080/share/u/"
-    shortened-urls: "http://localhost:8080/share/s/"
+    uploaded-files: "http://localhost:9007/share/u/"
+    shortened-urls: "http://localhost:9007/share/s/"
 
   file:
     upload-directory: "./uploads/"
