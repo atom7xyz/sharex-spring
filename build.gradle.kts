@@ -75,3 +75,7 @@ tasks.withType<JavaCompile> {
     options.isFork = true
     options.isIncremental = true
 }
+
+tasks.withType<org.springframework.boot.gradle.tasks.bundling.BootJar> {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
