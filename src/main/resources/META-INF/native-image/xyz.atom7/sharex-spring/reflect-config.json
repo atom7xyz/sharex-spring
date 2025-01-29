@@ -1,0 +1,8 @@
+[
+  {
+    "name": "xyz.atom7.sharexspring.SharexSpringApplicationKt",
+    "methods": [
+      { "name": "main", "parameterTypes": ["[Ljava.lang.String;"] }
+    ]
+  }
+] 

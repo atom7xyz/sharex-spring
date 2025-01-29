@@ -54,11 +54,11 @@ graalvmNative {
     binaries {
         named("main") {
             imageName.set("sharex-spring")
-            buildArgs.addAll(listOf(
-                "--initialize-at-build-time", // Optimize startup
-                "--no-fallback",              // Ensure full native mode
-                "--enable-http"
-            ))
+            mainClass.set("xyz.atom7.sharexspring.SharexSpringApplicationKt")
+            debug.set(false)
+            verbose.set(true)
+            fallback.set(false)
+            buildArgs.add("--enable-url-protocols=http,https")
         }
     }
 }
