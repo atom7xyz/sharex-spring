@@ -58,7 +58,7 @@ graalvmNative {
             
             verbose.set(false)
             buildArgs.addAll(
-                "-O3",
+                "-O2",
                 "-H:+ReportExceptionStackTraces",
                 "-R:MaxGCPauseMillis=100",
                 "--gc=G1",

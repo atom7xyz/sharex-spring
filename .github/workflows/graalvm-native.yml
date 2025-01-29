@@ -32,7 +32,9 @@ jobs:
       
       - name: Get version from tag
         id: get_version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
         if: startsWith(github.ref, 'refs/tags/')
       
       - name: Setup GraalVM
@@ -51,20 +53,25 @@ jobs:
         run: chmod +x gradlew
         
       - name: Build Native Image
-        run: ./gradlew --no-daemon nativeCompile
+        run: ./gradlew nativeCompile
+        
+      - name: Rename executable for architecture
+        run: |
+          cd build/native/nativeCompile/
+          mv sharex-spring sharex-spring-${{ matrix.architecture }}
         
       - name: Upload Native Image
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.artifact-name }}
-          path: build/native/nativeCompile/sharex-spring*
+          path: build/native/nativeCompile/sharex-spring-${{ matrix.architecture }}
 
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
-          files: build/native/nativeCompile/*
-          name: Release ${{ env.VERSION }}
+          files: build/native/nativeCompile/sharex-spring-${{ matrix.architecture }}
+          name: ${{ env.VERSION }}
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
