@@ -53,7 +53,7 @@ tasks.withType<Test> {
 graalvmNative {
     binaries {
         named("main") {
-            imageName.set("sharex-spring-${System.getProperty("os.arch")}")
+            imageName.set("sharex-spring")
             mainClass.set("xyz.atom7.sharexspring.SharexSpringApplicationKt")
             
             verbose.set(false)
@@ -66,6 +66,7 @@ graalvmNative {
                 "--initialize-at-build-time=org.slf4j.LoggerFactory,ch.qos.logback",
                 "-H:+RemoveSaturatedTypeFlows",
                 "--no-fallback",
+                "-march=native"
             )
         }
     }

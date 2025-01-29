@@ -92,6 +92,7 @@ jobs:
       - name: Rename executable for architecture
         run: |
           cd build/native/nativeCompile/
+          ls -la
           mv sharex-spring sharex-spring-${GITHUB_REF#refs/tags/}-${{ matrix.architecture }}
         if: startsWith(github.ref, 'refs/tags/')
         
