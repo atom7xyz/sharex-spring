@@ -19,7 +19,7 @@ services:
       - SERVER_PORT=9007
     ports:
       - "9007:9007"
-    command: ["java", "-jar", "sharex-spring-0.0.4-SNAPSHOT.jar"]
+    command: ["java", "-jar", "sharex-spring-0.0.5-SNAPSHOT.jar"]
     restart: unless-stopped
     user: "1000:1000"
     #networks:

@@ -40,14 +40,14 @@ To further secure your instance **close port `9007` to non-`localhost` connectio
 
    ```shell
    wget https://raw.githubusercontent.com/atom7xyz/sharex-spring/refs/heads/master/docker-compose.yml && \
-   wget https://github.com/atom7xyz/sharex-spring/releases/download/0.0.4/sharex-spring-0.0.4-SNAPSHOT.jar
+   wget https://github.com/atom7xyz/sharex-spring/releases/download/0.0.5/sharex-spring-0.0.5-SNAPSHOT.jar
    ```
 
 3. **Move the application JAR file to a convenient directory:**
 
    ```shell
    mkdir -p ~/tools/sharex-spring && \
-   mv ./sharex-spring-0.0.4-SNAPSHOT.jar ~/tools/sharex-spring/ && \
+   mv ./sharex-spring-0.0.5-SNAPSHOT.jar ~/tools/sharex-spring/ && \
    mv ./docker-compose.yml ~/tools/sharex-spring/ && \
    cd ~/tools/sharex-spring/
    ```
@@ -126,7 +126,7 @@ To compile and run your `sharex-spring` instance using Docker Compose, follow th
 
    ```shell
    mkdir -p ~/tools/sharex-spring && \
-   mv ./build/libs/sharex-spring-0.0.4-SNAPSHOT.jar ~/tools/sharex-spring/ && \
+   mv ./build/libs/sharex-spring-0.0.5-SNAPSHOT.jar ~/tools/sharex-spring/ && \
    mv ./docker-compose.yml ~/tools/sharex-spring/ && \
    cd ~/tools/sharex-spring/
    ```
@@ -206,7 +206,7 @@ To run your `sharex-spring` instance from source, follow these steps:
 
    ```shell
    mkdir -p ~/tools/sharex-spring && \
-   mv ./build/libs/sharex-spring-0.0.4-SNAPSHOT.jar ~/tools/sharex-spring/ && \
+   mv ./build/libs/sharex-spring-0.0.5-SNAPSHOT.jar ~/tools/sharex-spring/ && \
    mv ./start.sh ~/tools/sharex-spring/ && \
    cd ~/tools/sharex-spring/
    ```
@@ -216,7 +216,7 @@ To run your `sharex-spring` instance from source, follow these steps:
 4. **Run the JAR file:**
 
    ```shell
-   java -jar sharex-spring-0.0.4-SNAPSHOT.jar
+   java -jar sharex-spring-0.0.5-SNAPSHOT.jar
    ```
    or
    ```shell
@@ -242,7 +242,7 @@ To run your `sharex-spring` instance from source, follow these steps:
      -Dapp.limits.url-shortener.generated-name-length=4 \
      -Dserver.address=0.0.0.0 \
      -Dserver.port=9007 \
-     -jar sharex-spring-0.0.4-SNAPSHOT.jar
+     -jar sharex-spring-0.0.5-SNAPSHOT.jar
    ```
 
    From the provided [start.sh](https://github.com/atom7xyz/sharex-spring/start.sh) file, edit it using an editor like `vim` or `nano`:
@@ -262,7 +262,7 @@ To run your `sharex-spring` instance from source, follow these steps:
       -Dapp.limits.url.shortener.generated.name.length=4 \
       -Dserver.address=0.0.0.0 \
       -Dserver.port=9007 \
-      -jar sharex-spring-0.0.4-SNAPSHOT.jar
+      -jar sharex-spring-0.0.5-SNAPSHOT.jar
    "
    
    echo "The application is now running in the screen named `sharex-spring`"

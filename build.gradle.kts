@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "xyz.atom7"
-version = "0.0.4-SNAPSHOT"
+version = "0.0.5-SNAPSHOT"
 
 java {
     toolchain {
