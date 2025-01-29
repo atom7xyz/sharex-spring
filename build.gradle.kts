@@ -68,6 +68,10 @@ graalvmNative {
                 "--no-fallback",
                 "-march=native"
             )
+
+            if (project.hasProperty("org.graalvm.buildtools.native.additionalArgs")) {
+                buildArgs.addAll(project.property("org.graalvm.buildtools.native.additionalArgs").toString().split(" "))
+            }
         }
     }
 }

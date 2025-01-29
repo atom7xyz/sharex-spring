@@ -62,9 +62,11 @@ jobs:
           - architecture: aarch64
             runner: ubuntu-latest
             artifact-name: sharex-spring-arm64
+            graalvm-args: "--native-image-info -H:+StaticExecutable --static --target=linux-aarch64"
           - architecture: amd64
             runner: ubuntu-latest
             artifact-name: sharex-spring-x86_64
+            graalvm-args: "--native-image-info"
     
     runs-on: ${{ matrix.runner }}
     
@@ -78,7 +80,7 @@ jobs:
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           native-image-job-reports: 'true'
-          architecture: ${{ matrix.architecture }}
+          components: 'native-image,llvm-toolchain'
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
@@ -87,7 +89,12 @@ jobs:
         run: chmod +x gradlew
         
       - name: Build Native Image
-        run: ./gradlew nativeCompile
+        run: |
+          if [ "${{ matrix.architecture }}" = "aarch64" ]; then
+            sudo apt-get update && sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
+          fi
+          ./gradlew -Porg.graalvm.buildtools.native.imageName=sharex-spring nativeCompile \
+            -Porg.graalvm.buildtools.native.additionalArgs="${{ matrix.graalvm-args }}"
         
       - name: Rename executable for architecture
         run: |
