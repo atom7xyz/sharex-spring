@@ -63,7 +63,6 @@ graalvmNative {
                 "-R:MaxGCPauseMillis=100",
                 "--gc=G1",
                 "-H:G1HeapRegionSize=2m",
-                "-XX:MaxRAMPercentage=75",
                 "--initialize-at-build-time=org.slf4j.LoggerFactory,ch.qos.logback",
                 "-H:+RemoveSaturatedTypeFlows",
                 "--no-fallback",
