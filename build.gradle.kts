@@ -3,6 +3,7 @@ plugins {
     kotlin("plugin.spring") version "1.9.25"
     id("org.springframework.boot") version "3.4.1"
     id("io.spring.dependency-management") version "1.1.7"
+    id("org.graalvm.buildtools.native") version "0.10.3"
 }
 
 group = "xyz.atom7"
@@ -47,4 +48,17 @@ kotlin {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+graalvmNative {
+    binaries {
+        named("main") {
+            imageName.set("sharex-spring")
+            buildArgs.addAll(listOf(
+                "--initialize-at-build-time", // Optimize startup
+                "--no-fallback",              // Ensure full native mode
+                "--enable-http"
+            ))
+        }
+    }
 }

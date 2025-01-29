@@ -20,6 +20,7 @@ class FiltersConfig
 
         registrationBean.filter = rateLimitFilter
         registrationBean.addUrlPatterns("*")
+        registrationBean.setDispatcherTypes(DispatcherType.REQUEST)
 
         return registrationBean
     }
@@ -31,6 +32,7 @@ class FiltersConfig
 
         registrationBean.filter = apiKeyFilter
         registrationBean.addUrlPatterns("/api/*")
+        registrationBean.setDispatcherTypes(DispatcherType.REQUEST)
 
         return registrationBean
     }
