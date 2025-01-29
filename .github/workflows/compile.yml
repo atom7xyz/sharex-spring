@@ -57,12 +57,13 @@ jobs:
     name: Native Build with GraalVM
     strategy:
       matrix:
-        architecture: [aarch64, amd64]
+        # architecture: [aarch64, amd64]
+        architecture: [amd64]
         include:
-          - architecture: aarch64
-            runner: ubuntu-latest
-            artifact-name: sharex-spring-arm64
-            graalvm-args: "--native-image-info -H:+StaticExecutable --static --target=linux-aarch64"
+          # - architecture: aarch64
+          #   runner: ubuntu-latest
+          #   artifact-name: sharex-spring-arm64
+          #   graalvm-args: "--native-image-info -H:+StaticExecutable --static --target=linux-aarch64"
           - architecture: amd64
             runner: ubuntu-latest
             artifact-name: sharex-spring-x86_64
@@ -80,7 +81,7 @@ jobs:
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           native-image-job-reports: 'true'
-          components: 'native-image,llvm-toolchain'
+          components: 'native-image'
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
@@ -90,9 +91,7 @@ jobs:
         
       - name: Build Native Image
         run: |
-          if [ "${{ matrix.architecture }}" = "aarch64" ]; then
-            sudo apt-get update && sudo apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu
-          fi
+          # Removed ARM64 specific setup
           ./gradlew -Porg.graalvm.buildtools.native.imageName=sharex-spring nativeCompile \
             -Porg.graalvm.buildtools.native.additionalArgs="${{ matrix.graalvm-args }}"
         
@@ -132,7 +131,7 @@ jobs:
         with:
           files: |
             artifacts/sharex-spring-jar/sharex-spring-*-default.jar
-            artifacts/sharex-spring-arm64/sharex-spring-*-aarch64
+            # artifacts/sharex-spring-arm64/sharex-spring-*-aarch64  # Commented out ARM64 artifact
             artifacts/sharex-spring-x86_64/sharex-spring-*-amd64
           name: ${{ env.VERSION }}
           generate_release_notes: true
