@@ -53,12 +53,26 @@ tasks.withType<Test> {
 graalvmNative {
     binaries {
         named("main") {
-            imageName.set("sharex-spring")
+            imageName.set("sharex-spring-${System.getProperty("os.arch")}")
             mainClass.set("xyz.atom7.sharexspring.SharexSpringApplicationKt")
-            debug.set(false)
-            verbose.set(true)
-            fallback.set(false)
-            buildArgs.add("--enable-url-protocols=http,https")
+            
+            verbose.set(false)
+            buildArgs.addAll(
+                "-O3",
+                "-H:+ReportExceptionStackTraces",
+                "-R:MaxGCPauseMillis=100",
+                "--gc=G1",
+                "-H:G1HeapRegionSize=2m",
+                "-XX:MaxRAMPercentage=75",
+                "--initialize-at-build-time=org.slf4j.LoggerFactory,ch.qos.logback",
+                "-H:+RemoveSaturatedTypeFlows",
+                "--no-fallback",
+            )
         }
     }
+}
+
+tasks.withType<JavaCompile> {
+    options.isFork = true
+    options.isIncremental = true
 }
