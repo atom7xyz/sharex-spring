@@ -2,15 +2,15 @@
 
 screen -S sharex-spring -dm bash -c "
  java \
-   -Dapp.security.api.key=changeme \
-   -Dapp.rate.limit.action=50 \
-   -Dapp.rate.limit.wrong.api.key=1 \
-   -Dapp.public.uploaded.files=https://YOUR_DOMAIN/share/u/ \
-   -Dapp.public.shortened.urls=https://YOUR_DOMAIN/share/s/ \
-   -Dapp.file.upload.directory=./uploads/ \
-   -Dapp.limits.file.uploader.generated.name.length=8 \
-   -Dapp.limits.file.uploader.size=-1 \
-   -Dapp.limits.url.shortener.generated.name.length=4 \
+   -Dapp.security.api-key=changeme \
+   -Dapp.security.rate-limit-action=50 \
+   -Dapp.security.rate-limit-wrong-api-key=1 \
+   -Dapp.public.uploaded-files=https://YOUR_DOMAIN/share/u/ \
+   -Dapp.public.shortened-urls=https://YOUR_DOMAIN/share/s/ \
+   -Dapp.file.upload-directory=./uploads/ \
+   -Dapp.limits.file-uploader.generated-name-length=8 \
+   -Dapp.limits.file-uploader.size=-1 \
+   -Dapp.limits.url-shortener.generated-name-length=4 \
    -Dserver.address=0.0.0.0 \
    -Dserver.port=9007 \
    -jar sharex-spring-0.0.4-SNAPSHOT.jar
