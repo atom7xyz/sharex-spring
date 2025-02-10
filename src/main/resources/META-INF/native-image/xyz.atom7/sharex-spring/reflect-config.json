@@ -2,7 +2,19 @@
   {
     "name": "xyz.atom7.sharexspring.SharexSpringApplicationKt",
     "methods": [
-      { "name": "main", "parameterTypes": ["[Ljava.lang.String;"] }
+      {
+        "name": "main",
+        "parameterTypes": ["[Ljava.lang.String;"]
+      }
+    ]
+  },
+  {
+    "name": "org.flywaydb.core.internal.configuration.extensions.DeployScriptFilenameConfigurationExtension",
+    "methods": [
+      {
+        "name": "getScriptFilename",
+        "parameterTypes": []
+      }
     ]
   }
-] 
+]
