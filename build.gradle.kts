@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "xyz.atom7"
-version = "0.0.5-SNAPSHOT"
+version = "0.0.6-SNAPSHOT"
 
 java {
     toolchain {
@@ -60,8 +60,8 @@ graalvmNative {
             buildArgs.addAll(
                 "-O2",
                 "-H:+ReportExceptionStackTraces",
-                "-R:MaxGCPauseMillis=100",
                 "--gc=G1",
+                "-R:MaxGCPauseMillis=100",
                 "-H:G1HeapRegionSize=2m",
                 "--initialize-at-build-time=org.slf4j.LoggerFactory,ch.qos.logback",
                 "-H:+RemoveSaturatedTypeFlows",
@@ -70,7 +70,11 @@ graalvmNative {
             )
 
             if (project.hasProperty("org.graalvm.buildtools.native.additionalArgs")) {
-                buildArgs.addAll(project.property("org.graalvm.buildtools.native.additionalArgs").toString().split(" "))
+                buildArgs.addAll(
+                    project.property("org.graalvm.buildtools.native.additionalArgs")
+                        .toString()
+                        .split(" ")
+                )
             }
         }
     }

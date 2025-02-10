@@ -13,6 +13,10 @@ spring:
   h2:
     console:
       enabled: true
+  servlet:
+    multipart:
+      max-file-size: 1024MB
+      max-request-size: 1024MB
 
 app:
   security:
@@ -40,7 +44,7 @@ app:
     file-uploader:
       generated-name-length: 8
       # `size` is in KBytes
-      # value of `-1` does not impose any limitations
+      # value of `-1` defaults to 1024MB (spring.servlet.multipart.max-file-size)
       size: -1
     url-shortener:
       generated-name-length: 4

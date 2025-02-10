@@ -1,4 +1,4 @@
-name: Build GraalVM Native Image and JAR
+name: Release Build (JAR + Native Image)
 
 on:
   push:
@@ -57,11 +57,15 @@ jobs:
     name: Native Build with GraalVM
     strategy:
       matrix:
-        architecture: [amd64]
+        architecture: [amd64, arm64]
         include:
           - architecture: amd64
             runner: ubuntu-latest
             artifact-name: sharex-spring-x86_64
+            graalvm-args: "--native-image-info"
+          - architecture: arm64
+            runner: ubuntu-24.04-arm
+            artifact-name: sharex-spring-arm64
             graalvm-args: "--native-image-info"
     
     runs-on: ${{ matrix.runner }}
@@ -125,6 +129,7 @@ jobs:
           files: |
             artifacts/sharex-spring-jar/sharex-spring-*-default.jar
             artifacts/sharex-spring-x86_64/sharex-spring-*-amd64
+            artifacts/sharex-spring-arm64/sharex-spring-*-arm64
           name: ${{ env.VERSION }}
           generate_release_notes: true
         env:

@@ -13,7 +13,7 @@ screen -S sharex-spring -dm bash -c "
    -Dapp.limits.url-shortener.generated-name-length=4 \
    -Dserver.address=0.0.0.0 \
    -Dserver.port=9007 \
-   -jar sharex-spring-0.0.5-SNAPSHOT.jar
+   -jar sharex-spring-0.0.6-SNAPSHOT.jar
 "
 
 echo "The application is now running in the screen named `sharex-spring`"
