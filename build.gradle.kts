@@ -65,8 +65,7 @@ graalvmNative {
                 "-H:G1HeapRegionSize=2m",
                 "--initialize-at-build-time=org.slf4j.LoggerFactory,ch.qos.logback",
                 "-H:+RemoveSaturatedTypeFlows",
-                "--no-fallback",
-                "-march=native"
+                "--no-fallback"
             )
 
             if (project.hasProperty("org.graalvm.buildtools.native.additionalArgs")) {
