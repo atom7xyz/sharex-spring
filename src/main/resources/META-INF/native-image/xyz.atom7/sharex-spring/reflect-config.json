@@ -10,11 +10,6 @@
   },
   {
     "name": "org.flywaydb.core.internal.configuration.extensions.DeployScriptFilenameConfigurationExtension",
-    "methods": [
-      {
-        "name": "getScriptFilename",
-        "parameterTypes": []
-      }
-    ]
+    "allDeclaredMethods": true
   }
 ]
