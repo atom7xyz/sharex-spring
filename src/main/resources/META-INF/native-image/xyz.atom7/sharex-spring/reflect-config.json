@@ -9,7 +9,7 @@
     ]
   },
   {
-    "name": "org.flywaydb.core.internal.configuration.extensions.DeployScriptFilenameConfigurationExtension",
+    "name": "org.flywaydb.core.internal.configuration.extensions.*",
     "allDeclaredMethods": true
   }
 ]
