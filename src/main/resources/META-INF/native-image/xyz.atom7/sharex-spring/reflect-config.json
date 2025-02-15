@@ -9,7 +9,8 @@
     ]
   },
   {
-    "name": "org.flywaydb.core.internal.configuration.extensions.*",
+    "name": "org.flywaydb..*",
+    "allDeclaredClasses": true,
     "allDeclaredMethods": true
   }
 ]
