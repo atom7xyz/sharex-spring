@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "xyz.atom7"
-version = "0.0.6-SNAPSHOT"
+version = "0.0.10"
 
 java {
     toolchain {
@@ -28,9 +28,8 @@ dependencies {
     implementation("com.github.ben-manes.caffeine:caffeine:3.2.0")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.flywaydb:flyway-core")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
-    runtimeOnly("com.h2database:h2")
+    runtimeOnly("org.postgresql:postgresql")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
@@ -55,26 +54,54 @@ graalvmNative {
         named("main") {
             imageName.set("sharex-spring")
             mainClass.set("xyz.atom7.sharexspring.SharexSpringApplicationKt")
-            
-            verbose.set(false)
+
             buildArgs.addAll(
-                "-Ob",
-                "-H:+ReportExceptionStackTraces",
-                "--gc=G1",
-                "-R:MaxGCPauseMillis=100",
-                "-H:G1HeapRegionSize=2m",
-                "--initialize-at-build-time=org.slf4j.LoggerFactory,ch.qos.logback",
-                "-H:+RemoveSaturatedTypeFlows",
-                "--no-fallback"
+                // [Optimization and Memory Settings] ----------------------------------------
+                "-O2",                      // Optimization level GraalVM should compile the image in
+                "--gc=G1",                  // Select G1 garbage collector for balance between throughput/pause times
+                "-H:+UseNUMA",              // Optimize memory allocation for Non-Uniform Memory Access architectures
+                "-H:+UseDivisor",           // Improve garbage collection interval calculations
+                "-R:MaxGCPauseMillis=100",  // Target maximum GC pause time (milliseconds)
+
+                "-H:G1HeapRegionSize=2m",   // Memory region size for G1 collector (smaller regions
+                                            // improve allocation precision but increase overhead)
+
+
+                // [Build Configuration] ----------------------------------------------------
+                "--enable-url-protocols=http",              // Enable HTTP URL handling (required for web apps)
+                "--no-fallback",                            // Force full native build
+                "-H:+ReportExceptionStackTraces",           // Show full stacktraces for build-time initialization errors
+
+                "-H:+ReportUnsupportedElementsAtRuntime",   // Warn about reflection/JNI/resource usages
+                                                            // that might fail at runtime
+
+                "-H:+RemoveSaturatedTypeFlows",             // Aggressive optimization to eliminate redundant type checks
+
+
+                // [Class Initialization] ----------------------------------------------------
+                "--initialize-at-build-time=" +                         // Classes to initialize during image build
+                        "org.slf4j.LoggerFactory," +                    // Logging framework initialization
+                        "ch.qos.logback," +                             // Logback configuration
+                        "org.springframework.boot.SpringApplication," + // Spring Boot startup class
+                        "com.fasterxml.jackson.databind," +             // Jackson JSON processor
+                        "sun.security.provider.NativePRNG",             // Native cryptographic random number generator
+
+
+                // [Native Image Diagnostics] -----------------------------------------------
+                "-H:+PrintClassInitialization", // Log class initialization decisions (debugging)
+                "-H:+PrintAnalysisCallTree",    // Show full call tree during static analysis
+
+
+                // [Security Configuration] --------------------------------------------------
+                "-H:+EnableAllSecurityServices"  // Enable security providers (SSL, crypto, etc)
             )
 
-            if (project.hasProperty("org.graalvm.buildtools.native.additionalArgs")) {
-                buildArgs.addAll(
-                    project.property("org.graalvm.buildtools.native.additionalArgs")
-                        .toString()
-                        .split(" ")
-                )
-            }
+            // Handle additional arguments from properties more safely
+            project.findProperty("org.graalvm.buildtools.native.additionalArgs")
+                ?.toString()
+                ?.splitToSequence(',')  // Use comma delimiter for safer argument handling
+                ?.filter { it.isNotBlank() }
+                ?.forEach { buildArgs.add(it) }
         }
     }
 }

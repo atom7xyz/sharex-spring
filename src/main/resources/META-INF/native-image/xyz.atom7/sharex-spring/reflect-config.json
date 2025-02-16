@@ -7,10 +7,5 @@
         "parameterTypes": ["[Ljava.lang.String;"]
       }
     ]
-  },
-  {
-    "name": "org.flywaydb..*",
-    "allDeclaredClasses": true,
-    "allDeclaredMethods": true
   }
 ]

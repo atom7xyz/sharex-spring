@@ -1,0 +1,51 @@
+#
+# Docker compose for sharex-spring arm64/aarch64
+#
+
+services:
+
+  sharex-spring:
+    image: alpine:latest
+    container_name: sharex-spring
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      - SERVER_PORT=9007
+      # DATABASE CONNECTIVITY
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://sharex-database:5432/db_sharex
+      - SPRING_DATASOURCE_USERNAME=sharex_user
+      - SPRING_DATASOURCE_PASSWORD=sharex_password
+      # APPLICATION SECURITY
+      - APP_SECURITY_API_KEY=changeme
+      - APP_SECURITY_RATE_LIMIT_ACTION=50
+      - APP_SECURITY_RATE_LIMIT_WRONG_API_KEY=1
+      # PUBLIC ENDPOINTS
+      - APP_PUBLIC_UPLOADED_FILES=https://YOUR_DOMAIN/share/u/
+      - APP_PUBLIC_SHORTENED_URLS=https://YOUR_DOMAIN/share/s/
+      # FILE UPLOAD DIRECTORY
+      - APP_FILE_UPLOAD_DIRECTORY=./uploads/
+      # APPLICATION LIMITS
+      - APP_LIMITS_FILE_UPLOADER_GENERATED_NAME_LENGTH=8
+      - APP_LIMITS_FILE_UPLOADER_SIZE=-1
+      - APP_LIMITS_URL_SHORTENER_GENERATED_NAME_LENGTH=4
+    ports:
+      - "9007:9007"
+    command: ["./sharex-spring-0.0.10-arm64"]
+    restart: unless-stopped
+    user: "1000:1000"
+    #networks:
+    #  - shared-nginx
+
+  sharex-database:
+    image: 'postgres:17-alpine'
+    container_name: sharex-database
+    environment:
+      - POSTGRES_USER=compose-sharex_user
+      - POSTGRES_PASSWORD=compose-sharex_password
+      - POSTGRES_DB=db_sharex
+    restart: unless-stopped
+
+#networks:
+#  shared-nginx:
+#    external: true

@@ -21,6 +21,7 @@ class FiltersConfig
         registrationBean.filter = rateLimitFilter
         registrationBean.addUrlPatterns("*")
         registrationBean.setDispatcherTypes(DispatcherType.REQUEST)
+        registrationBean.order = 1
 
         return registrationBean
     }
@@ -33,6 +34,7 @@ class FiltersConfig
         registrationBean.filter = apiKeyFilter
         registrationBean.addUrlPatterns("/api/*")
         registrationBean.setDispatcherTypes(DispatcherType.REQUEST)
+        registrationBean.order = 2
 
         return registrationBean
     }
@@ -40,12 +42,13 @@ class FiltersConfig
     @Bean
     fun forwardedHeaderFilter(): FilterRegistrationBean<ForwardedHeaderFilter>
     {
-        val filter = ForwardedHeaderFilter()
-        val registration = FilterRegistrationBean(filter)
-        registration.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType.ASYNC, DispatcherType.ERROR)
-        registration.order = Ordered.HIGHEST_PRECEDENCE
-        registration.addUrlPatterns("*")
-        return registration
+        val registrationBean = FilterRegistrationBean(ForwardedHeaderFilter())
+
+        registrationBean.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType.ASYNC, DispatcherType.ERROR)
+        registrationBean.order = Ordered.HIGHEST_PRECEDENCE
+        registrationBean.addUrlPatterns("*")
+
+        return registrationBean
     }
 
 }

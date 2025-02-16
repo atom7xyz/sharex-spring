@@ -3,16 +3,13 @@ server:
 
 spring:
   datasource:
-    url: jdbc:h2:file:./data/db;DB_CLOSE_DELAY=-1;AUTO_SERVER=FALSE
-    driverClassName: org.h2.Driver
-    username: sa
-    password: password
+    url: jdbc:postgresql://sharex_database:5432/sharex
+    driverClassName: org.postgresql.Driver
+    username: sharex_user
+    password: sharex_password
   jpa:
     hibernate:
       ddl-auto: update
-  h2:
-    console:
-      enabled: true
   servlet:
     multipart:
       max-file-size: 1024MB
@@ -45,6 +42,10 @@ app:
       generated-name-length: 8
       # `size` is in KBytes
       # value of `-1` defaults to 1024MB (spring.servlet.multipart.max-file-size)
-      size: -1
+      size: 51200
     url-shortener:
       generated-name-length: 4
+
+  caching:
+    ttl: 60 # in minutes
+    size: 100 # items in cache
