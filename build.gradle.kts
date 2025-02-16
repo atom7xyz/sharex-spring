@@ -59,6 +59,7 @@ graalvmNative {
                 // [Optimization and Memory Settings] ----------------------------------------
                 "-O2",                      // Optimization level GraalVM should compile the image in
                 "--gc=G1",                  // Select G1 garbage collector for balance between throughput/pause times
+                "-H:+UnlockExperimentalVMOptions",
                 "-H:+UseNUMA",              // Optimize memory allocation for Non-Uniform Memory Access architectures
                 "-H:+UseDivisor",           // Improve garbage collection interval calculations
                 "-R:MaxGCPauseMillis=100",  // Target maximum GC pause time (milliseconds)
@@ -83,17 +84,12 @@ graalvmNative {
                         "org.slf4j.LoggerFactory," +                    // Logging framework initialization
                         "ch.qos.logback," +                             // Logback configuration
                         "org.springframework.boot.SpringApplication," + // Spring Boot startup class
-                        "com.fasterxml.jackson.databind," +             // Jackson JSON processor
                         "sun.security.provider.NativePRNG",             // Native cryptographic random number generator
 
 
                 // [Native Image Diagnostics] -----------------------------------------------
                 "-H:+PrintClassInitialization", // Log class initialization decisions (debugging)
-                "-H:+PrintAnalysisCallTree",    // Show full call tree during static analysis
-
-
-                // [Security Configuration] --------------------------------------------------
-                "-H:+EnableAllSecurityServices"  // Enable security providers (SSL, crypto, etc)
+                "-H:+PrintAnalysisCallTree"     // Show full call tree during static analysis
             )
 
             // Handle additional arguments from properties more safely
