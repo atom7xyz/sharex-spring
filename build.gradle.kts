@@ -60,8 +60,6 @@ graalvmNative {
                 "-O2",                      // Optimization level GraalVM should compile the image in
                 "--gc=G1",                  // Select G1 garbage collector for balance between throughput/pause times
                 "-H:+UnlockExperimentalVMOptions",
-                "-H:+UseNUMA",              // Optimize memory allocation for Non-Uniform Memory Access architectures
-                "-H:+UseDivisor",           // Improve garbage collection interval calculations
                 "-R:MaxGCPauseMillis=100",  // Target maximum GC pause time (milliseconds)
 
                 "-H:G1HeapRegionSize=2m",   // Memory region size for G1 collector (smaller regions
