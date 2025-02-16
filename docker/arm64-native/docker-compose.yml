@@ -5,7 +5,7 @@
 services:
 
   sharex-spring:
-    image: alpine:latest
+    image: debian:latest
     container_name: sharex-spring
     working_dir: /app
     volumes:
@@ -31,9 +31,12 @@ services:
       - APP_LIMITS_URL_SHORTENER_GENERATED_NAME_LENGTH=4
     ports:
       - "9007:9007"
-    command: ["./sharex-spring-0.0.10-arm64"]
+    command: ["sh", "-c", "./sharex-spring-0.0.10-arm64"]
     restart: unless-stopped
     user: "1000:1000"
+    depends_on:
+      sharex-database:
+        condition: service_healthy
     #networks:
     #  - shared-nginx
 
@@ -41,10 +44,20 @@ services:
     image: 'postgres:17-alpine'
     container_name: sharex-database
     environment:
-      - POSTGRES_USER=compose-sharex_user
-      - POSTGRES_PASSWORD=compose-sharex_password
+      - POSTGRES_USER=sharex_user
+      - POSTGRES_PASSWORD=sharex_password
       - POSTGRES_DB=db_sharex
+    volumes:
+      - pgdata:/var/lib/postgresql/data
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sharex_user -d db_sharex"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:
 
 #networks:
 #  shared-nginx:
