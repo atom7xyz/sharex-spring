@@ -4,8 +4,7 @@
 
 # sharex-spring
 
-A robust and efficient self-hosted server for ShareX, supporting image uploads, text sharing, file hosting, 
-and URL shortening.
+A self-hosted server for ShareX, supporting image uploads, text sharing, file hosting, and URL shortening.
 
 ---
 
