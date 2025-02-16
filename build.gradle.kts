@@ -81,8 +81,7 @@ graalvmNative {
                 "--initialize-at-build-time=" +                         // Classes to initialize during image build
                         "org.slf4j.LoggerFactory," +                    // Logging framework initialization
                         "ch.qos.logback," +                             // Logback configuration
-                        "org.springframework.boot.SpringApplication," + // Spring Boot startup class
-                        "sun.security.provider.NativePRNG",             // Native cryptographic random number generator
+                        "org.springframework.boot.SpringApplication" +  // Spring Boot startup class
 
 
                 // [Native Image Diagnostics] -----------------------------------------------
