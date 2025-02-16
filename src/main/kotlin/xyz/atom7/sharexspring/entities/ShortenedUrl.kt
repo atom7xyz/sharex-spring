@@ -1,28 +1,22 @@
 package xyz.atom7.sharexspring.entities
 
-import jakarta.persistence.Column
-import jakarta.persistence.Embeddable
-import jakarta.persistence.EmbeddedId
-import jakarta.persistence.Entity
-import java.io.Serializable
+import jakarta.persistence.*
 
 @Entity
 data class ShortenedUrl(
-    @Column(nullable = false)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0,
+
+    @Column(nullable = false, unique = true)
     val originUrl: String,
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     val targetUrl: String
 ) {
-    @EmbeddedId
-    private val id: ShortenedUrlId = ShortenedUrlId(originUrl, targetUrl)
+
+    override fun toString(): String {
+        return "ShortenedUrl(id=$id, originUrl='$originUrl', targetUrl='$targetUrl')"
+    }
+
 }
-
-@Embeddable
-data class ShortenedUrlId(
-    @Column(nullable = false)
-    val originUrl: String,
-
-    @Column(nullable = false)
-    val targetUrl: String
-) : Serializable

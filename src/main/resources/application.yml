@@ -3,13 +3,16 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://sharex_database:5432/sharex
+    url: jdbc:postgresql://sharex_database:5432/db_sharex
     driverClassName: org.postgresql.Driver
     username: sharex_user
     password: sharex_password
   jpa:
     hibernate:
       ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
   servlet:
     multipart:
       max-file-size: 1024MB
