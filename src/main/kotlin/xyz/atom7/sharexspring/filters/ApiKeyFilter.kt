@@ -20,7 +20,7 @@ import java.security.MessageDigest
 @Component
 @Order(1)
 class ApiKeyFilter(
-    @Value("\${app.security.api-key}")
+    @param:Value("\${app.security.api-key}")
     private val validApiKey: String,
     private val rateLimiterService: RateLimiterService
 ) : Filter

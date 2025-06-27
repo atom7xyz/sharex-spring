@@ -12,10 +12,10 @@ import java.util.concurrent.atomic.AtomicInteger
 @Service
 @EnableScheduling
 class RateLimiterService(
-    @Value("\${app.security.rate-limit-action}")
+    @param:Value("\${app.security.rate-limit-action}")
     val rateLimitAction: Int,
 
-    @Value("\${app.security.rate-limit-wrong-api-key}")
+    @param:Value("\${app.security.rate-limit-wrong-api-key}")
     val rateLimitWrongApiKey: Int
 ) {
     private val actionRequests: IpActionsMap = ConcurrentHashMap()

@@ -18,10 +18,10 @@ class UrlShortenerServiceTest
     private lateinit var urlShortenerService: UrlShortenerService
     private lateinit var urlRepository: UrlRepository
 
-    @Value("\${app.public.shortened-urls}")
+    @field:Value("\${app.public.shortened-urls}")
     private val shortenedUrlsPath: String = ""
 
-    @Value("\${app.limits.url-shortener.generated-name-length}")
+    @field:Value("\${app.limits.url-shortener.generated-name-length}")
     private val limitUrlNameLength: Int = 0
 
     @BeforeEach

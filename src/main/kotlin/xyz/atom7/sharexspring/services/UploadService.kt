@@ -14,16 +14,16 @@ import java.nio.file.Paths
 
 @Service
 class UploadService(
-    @Value("\${app.file.upload-directory}")
+    @param:Value("\${app.file.upload-directory}")
     private val uploadDirectory: String,
 
-    @Value("\${app.public.uploaded-files}")
+    @param:Value("\${app.public.uploaded-files}")
     private val uploadedFilesPath: String,
 
-    @Value("\${app.limits.file-uploader.generated-name-length}")
+    @param:Value("\${app.limits.file-uploader.generated-name-length}")
     private val limitFileNameLength: Int,
 
-    @Value("\${app.limits.file-uploader.size}")
+    @param:Value("\${app.limits.file-uploader.size}")
     private val limitFileSizeKB: Long
 ) {
 
@@ -37,6 +37,9 @@ class UploadService(
 
     val limitFileSizeInBytes: Long
         get() = limitFileSizeKB * 1024
+
+    val getBaseDirectory: Path
+        get() = Paths.get(uploadDirectory).normalize().toAbsolutePath()
 
     fun uploadFile(file: MultipartFile): ResponseEntity<String>
     {
@@ -70,7 +73,12 @@ class UploadService(
     @Throws(FileNotFoundException::class)
     fun getFile(file: String): Path
     {
-        val filePath = Paths.get(uploadDirectory, file)
+        val baseDirectory = getBaseDirectory.normalize().toAbsolutePath()
+        val filePath = baseDirectory.resolve(file).normalize().toAbsolutePath()
+
+        if (!filePath.startsWith(baseDirectory)) {
+            throw IllegalArgumentException("Invalid file path")
+        }
 
         if (!Files.exists(filePath)) {
             throw FileNotFoundException("File not found: $file")

@@ -9,10 +9,10 @@ import org.springframework.boot.test.context.SpringBootTest
 @SpringBootTest
 class RateLimiterServiceTest 
 {
-    @Value("\${app.security.rate-limit-action}")
+    @field:Value("\${app.security.rate-limit-action}")
     private var rateLimitAction: Int = 0
 
-    @Value("\${app.security.rate-limit-wrong-api-key}")
+    @field:Value("\${app.security.rate-limit-wrong-api-key}")
     private var rateLimitWrongApiKey: Int = 0
 
     private val rateLimiterService by lazy {

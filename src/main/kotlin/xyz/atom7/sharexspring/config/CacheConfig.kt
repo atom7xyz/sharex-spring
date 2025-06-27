@@ -10,10 +10,10 @@ import java.util.concurrent.TimeUnit
 
 @Configuration
 class CacheConfig(
-    @Value("\${app.caching.ttl}")
+    @param:Value("\${app.caching.ttl}")
     private val cacheTtl: Long,
 
-    @Value("\${app.caching.size}")
+    @param:Value("\${app.caching.size}")
     private val cacheSize: Long,
 ) {
     @Bean

@@ -19,10 +19,10 @@ class UploadServiceTest
     @TempDir
     lateinit var tempDir: Path
     
-    @Value("\${app.public.uploaded-files}")
+    @field:Value("\${app.public.uploaded-files}")
     private val uploadedFilesPath: String = ""
 
-    @Value("\${app.limits.file-uploader.generated-name-length}")
+    @field:Value("\${app.limits.file-uploader.generated-name-length}")
     private val limitFileNameLength: Int = 0
 
     private val limitFileSizeKB: Long = 1024

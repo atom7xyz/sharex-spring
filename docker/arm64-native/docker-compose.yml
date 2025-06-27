@@ -31,7 +31,7 @@ services:
       - APP_LIMITS_URL_SHORTENER_GENERATED_NAME_LENGTH=4
     ports:
       - "9007:9007"
-    command: ["sh", "-c", "./sharex-spring-0.0.10-arm64"]
+    command: ["sh", "-c", "./sharex-spring-0.0.11-arm64"]
     restart: unless-stopped
     user: "1000:1000"
     depends_on:

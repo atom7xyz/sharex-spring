@@ -15,10 +15,10 @@ import java.net.URI
 class UrlShortenerService(
     private val urlRepository: UrlRepository,
 
-    @Value("\${app.public.shortened-urls}")
+    @param:Value("\${app.public.shortened-urls}")
     private val shortenedUrlsPath: String,
 
-    @Value("\${app.limits.url-shortener.generated-name-length}")
+    @param:Value("\${app.limits.url-shortener.generated-name-length}")
     private val limitUrlNameLength: Int
 ) {
 
