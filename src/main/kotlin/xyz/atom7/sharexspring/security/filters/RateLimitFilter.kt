@@ -1,4 +1,4 @@
-package xyz.atom7.sharexspring.filters
+package xyz.atom7.sharexspring.security.filters
 
 import jakarta.servlet.Filter
 import jakarta.servlet.FilterChain
@@ -6,15 +6,16 @@ import jakarta.servlet.ServletRequest
 import jakarta.servlet.ServletResponse
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
-import xyz.atom7.sharexspring.services.RateLimitType
-import xyz.atom7.sharexspring.services.RateLimiterService
+import xyz.atom7.sharexspring.services.RateLimiterActionService
+import xyz.atom7.sharexspring.services.RateLimiterApiKeyService
 
 @Component
-@Order(0)
-class RateLimitFilter(private val rateLimiterService: RateLimiterService) : Filter
+class RateLimitFilter(
+    private val rateLimiterActionService: RateLimiterActionService,
+    private val rateLimiterApiKeyService: RateLimiterApiKeyService
+) : Filter
 {
     override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain)
     {
@@ -23,15 +24,15 @@ class RateLimitFilter(private val rateLimiterService: RateLimiterService) : Filt
 
         val address = httpRequest.remoteAddr
 
-        val actionLimitExceeded = rateLimiterService.hasReachedRateLimit(address, RateLimitType.ACTION)
-        val wrongApiKeyLimitExceeded = rateLimiterService.hasReachedRateLimit(address, RateLimitType.API_KEY)
+        val actionLimitExceeded = rateLimiterActionService.consume(address)
+        val wrongApiKeyLimitExceeded = rateLimiterApiKeyService.limitReached(address)
 
         if (!actionLimitExceeded && !wrongApiKeyLimitExceeded) {
-            rateLimiterService.signHit(address, RateLimitType.ACTION)
             chain.doFilter(request, response)
             return
         }
 
         httpResponse.sendError(HttpStatus.TOO_MANY_REQUESTS.value(), "Rate limit exceeded. Try again later.")
     }
+
 }

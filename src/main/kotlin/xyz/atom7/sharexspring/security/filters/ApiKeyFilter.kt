@@ -1,4 +1,4 @@
-package xyz.atom7.sharexspring.filters
+package xyz.atom7.sharexspring.security.filters
 
 import jakarta.servlet.Filter
 import jakarta.servlet.FilterChain
@@ -7,22 +7,19 @@ import jakarta.servlet.ServletResponse
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import xyz.atom7.sharexspring.logging.AppLogger.div
 import xyz.atom7.sharexspring.logging.AppLogger.print
 import xyz.atom7.sharexspring.logging.LogLevel
-import xyz.atom7.sharexspring.services.RateLimitType
-import xyz.atom7.sharexspring.services.RateLimiterService
+import xyz.atom7.sharexspring.services.RateLimiterApiKeyService
 import java.security.MessageDigest
 
 @Component
-@Order(1)
 class ApiKeyFilter(
     @param:Value("\${app.security.api-key}")
     private val validApiKey: String,
-    private val rateLimiterService: RateLimiterService
+    private val rateLimiterApiKeyService: RateLimiterApiKeyService
 ) : Filter
 {
     companion object {
@@ -34,10 +31,7 @@ class ApiKeyFilter(
         if (validApiKey == HEADER_DEFAULT) {
             div(LogLevel.WARN)
             print(LogLevel.WARN, "API Key has default value!")
-            print(LogLevel.WARN,
-                "For security reasons, it is recommended to set a unique API key " +
-                        "in the config: `app.security.api-key`"
-            )
+            print(LogLevel.WARN, "For security reasons set a unique API key in the env: `APP_SECURITY_API-KEY`")
             div(LogLevel.WARN)
         }
     }
@@ -46,7 +40,7 @@ class ApiKeyFilter(
     {
         val httpRequest = request as HttpServletRequest
         val httpResponse = response as HttpServletResponse
-        val address = request.remoteAddr
+        val address = httpRequest.remoteAddr
 
         val apiKey = httpRequest.getHeader(HEADER)?.trim()
         
@@ -56,11 +50,11 @@ class ApiKeyFilter(
         }
         
         if (!MessageDigest.isEqual(apiKey.toByteArray(), validApiKey.toByteArray())) {
-            rateLimiterService.signHit(address, RateLimitType.API_KEY)
+            rateLimiterApiKeyService.consume(address)
             httpResponse.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized")
             return
         }
 
-        chain.doFilter(request, response)
+        chain.doFilter(httpRequest, httpResponse)
     }
 }

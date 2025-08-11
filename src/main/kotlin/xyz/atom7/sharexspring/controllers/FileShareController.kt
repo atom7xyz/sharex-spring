@@ -1,27 +1,28 @@
 package xyz.atom7.sharexspring.controllers
 
-import jakarta.servlet.http.HttpServletResponse
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.servlet.view.RedirectView
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import xyz.atom7.sharexspring.services.UploadService
-import xyz.atom7.sharexspring.services.UrlShortenerService
 import java.nio.file.Files
 
 @RestController
-@RequestMapping("/share/")
-class PublicController(
-    private val uploadService: UploadService,
-    private val urlShortenerService: UrlShortenerService
+@RequestMapping("/share/u")
+class FileShareController(
+    private val uploadService: UploadService
 ) {
-    @GetMapping("/u/{file}")
+
+    @PostMapping
+    fun uploadFile(@RequestParam file: MultipartFile): ResponseEntity<String>
+    {
+        return uploadService.uploadFile(file)
+    }
+
+    @GetMapping("/{file}")
     fun getFile(@PathVariable file: String): Any
     {
         return try
@@ -44,18 +45,4 @@ class PublicController(
             ResponseEntity(e.message, HttpStatus.NOT_FOUND)
         }
     }
-
-    @GetMapping("/s/{url}")
-    fun gotoTargetUrl(@PathVariable url: String, response: HttpServletResponse): Any
-    {
-        return try
-        {
-            val target = urlShortenerService.getUrl(url)!!.originUrl
-            RedirectView(target)
-        }
-        catch (e: Exception) {
-            ResponseEntity(e.message, HttpStatus.NOT_FOUND)
-        }
-    }
-
 }

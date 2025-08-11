@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://sharex_database:5432/db_sharex
+    url: jdbc:postgresql://localhost:5432/db_sharex
     driverClassName: org.postgresql.Driver
     username: sharex_user
     password: sharex_password
@@ -21,8 +21,8 @@ spring:
 app:
   security:
     api-key: "changeme"
-    rate-limit-action: 50
-    rate-limit-wrong-api-key: 1
+    rate-limit-action: 50 # max requests per minute
+    rate-limit-wrong-api-key: 1 # max requests per minute
 
   public:
     uploaded-files: "http://localhost:9007/share/u/"
@@ -51,4 +51,3 @@ app:
 
   caching:
     ttl: 60 # in minutes
-    size: 100 # items in cache

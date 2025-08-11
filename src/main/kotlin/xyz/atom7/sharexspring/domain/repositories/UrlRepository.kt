@@ -1,7 +1,7 @@
-package xyz.atom7.sharexspring.repositories
+package xyz.atom7.sharexspring.domain.repositories
 
 import org.springframework.data.jpa.repository.JpaRepository
-import xyz.atom7.sharexspring.entities.ShortenedUrl
+import xyz.atom7.sharexspring.domain.entities.ShortenedUrl
 import java.util.*
 
 interface UrlRepository : JpaRepository<ShortenedUrl, Long>

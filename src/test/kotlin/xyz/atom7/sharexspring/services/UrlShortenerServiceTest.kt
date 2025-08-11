@@ -8,8 +8,8 @@ import org.mockito.Mockito.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
-import xyz.atom7.sharexspring.entities.ShortenedUrl
-import xyz.atom7.sharexspring.repositories.UrlRepository
+import xyz.atom7.sharexspring.domain.entities.ShortenedUrl
+import xyz.atom7.sharexspring.domain.repositories.UrlRepository
 import java.util.*
 
 @SpringBootTest

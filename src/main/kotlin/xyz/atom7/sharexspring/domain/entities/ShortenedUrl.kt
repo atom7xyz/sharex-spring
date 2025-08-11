@@ -1,4 +1,4 @@
-package xyz.atom7.sharexspring.entities
+package xyz.atom7.sharexspring.domain.entities
 
 import jakarta.persistence.*
 

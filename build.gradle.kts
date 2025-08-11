@@ -4,10 +4,11 @@ plugins {
     id("org.springframework.boot") version "3.4.1"
     id("io.spring.dependency-management") version "1.1.7"
     id("org.graalvm.buildtools.native") version "0.10.6"
+    id("org.jetbrains.kotlin.plugin.jpa") version "2.2.20-Beta2"
 }
 
 group = "xyz.atom7"
-version = "0.0.11"
+version = "0.0.12"
 
 java {
     toolchain {
@@ -56,37 +57,20 @@ graalvmNative {
             mainClass.set("xyz.atom7.sharexspring.SharexSpringApplicationKt")
 
             buildArgs.addAll(
-                // [Optimization and Memory Settings] ----------------------------------------
-                "-O2",                      // Optimization level GraalVM should compile the image in
-                "--gc=G1",                  // Select G1 garbage collector for balance between throughput/pause times
+                "-O2",
+                "--gc=G1",
                 "-H:+UnlockExperimentalVMOptions",
-                "-R:MaxGCPauseMillis=100",  // Target maximum GC pause time (milliseconds)
-
-                "-H:G1HeapRegionSize=2m",   // Memory region size for G1 collector (smaller regions
-                                            // improve allocation precision but increase overhead)
-
-
-                // [Build Configuration] ----------------------------------------------------
-                "--enable-url-protocols=http",              // Enable HTTP URL handling (required for web apps)
-                "--no-fallback",                            // Force full native build
-                "-H:+ReportExceptionStackTraces",           // Show full stacktraces for build-time initialization errors
-
-                "-H:+ReportUnsupportedElementsAtRuntime",   // Warn about reflection/JNI/resource usages
-                                                            // that might fail at runtime
-
-                "-H:+RemoveSaturatedTypeFlows",             // Aggressive optimization to eliminate redundant type checks
-
-
-                // [Class Initialization] ----------------------------------------------------
+                "-H:+ReportExceptionStackTraces",
+                "-H:+ReportUnsupportedElementsAtRuntime",
+                "-H:+RemoveSaturatedTypeFlows",
+                "-H:+PrintClassInitialization",
+                "-H:+PrintAnalysisCallTree",
+                "--enable-url-protocols=http",
+                "--no-fallback", // Force full native build
                 "--initialize-at-build-time=" +                         // Classes to initialize during image build
                         "org.slf4j.LoggerFactory," +                    // Logging framework initialization
                         "ch.qos.logback," +                             // Logback configuration
-                        "org.springframework.boot.SpringApplication" +  // Spring Boot startup class
-
-
-                // [Native Image Diagnostics] -----------------------------------------------
-                "-H:+PrintClassInitialization", // Log class initialization decisions (debugging)
-                "-H:+PrintAnalysisCallTree"     // Show full call tree during static analysis
+                        "org.springframework.boot.SpringApplication"    // Spring Boot startup class
             )
 
             // Handle additional arguments from properties more safely

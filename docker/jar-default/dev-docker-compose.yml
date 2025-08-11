@@ -1,0 +1,70 @@
+services:
+
+  sharex-builder:
+    image: gradle:8.10-jdk21-alpine
+    working_dir: /app
+    volumes:
+      - ../../:/app
+    command: gradle build -x test
+
+  sharex-spring:
+    image: amazoncorretto:21-alpine-jdk
+    container_name: sharex-spring
+    working_dir: /app
+    volumes:
+      - ../../:/app
+    environment:
+      - SERVER_PORT=9007
+      # DATABASE CONNECTIVITY
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://sharex-database:5432/db_sharex
+      - SPRING_DATASOURCE_USERNAME=sharex_user
+      - SPRING_DATASOURCE_PASSWORD=sharex_password
+      # APPLICATION SECURITY
+      - APP_SECURITY_API_KEY=changeme
+      - APP_SECURITY_RATE_LIMIT_ACTION=5
+      - APP_SECURITY_RATE_LIMIT_WRONG_API_KEY=1
+      # PUBLIC ENDPOINTS
+      - APP_PUBLIC_UPLOADED_FILES=https://YOUR_DOMAIN/share/u/
+      - APP_PUBLIC_SHORTENED_URLS=https://YOUR_DOMAIN/share/s/
+      # FILE UPLOAD DIRECTORY
+      - APP_FILE_UPLOAD_DIRECTORY=./uploads/
+      # APPLICATION LIMITS
+      - APP_LIMITS_FILE_UPLOADER_GENERATED_NAME_LENGTH=8
+      - APP_LIMITS_FILE_UPLOADER_SIZE=51200
+      - APP_LIMITS_URL_SHORTENER_GENERATED_NAME_LENGTH=4
+    ports:
+      - "9007:9007"
+    command: ["java", "-jar", "./build/libs/sharex-spring-0.0.11.jar"]
+    restart: unless-stopped
+    user: "1000:1000"
+    depends_on:
+      sharex-database:
+        condition: service_healthy
+    #networks:
+    #  - shared-nginx
+
+  sharex-database:
+    image: 'postgres:17-alpine'
+    container_name: sharex-database
+    environment:
+      - POSTGRES_USER=sharex_user
+      - POSTGRES_PASSWORD=sharex_password
+      - POSTGRES_DB=db_sharex
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sharex_user -d db_sharex"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    hostname: "localhost"
+    ports:
+      - "5432:5432"
+
+volumes:
+  pgdata:
+
+#networks:
+#  shared-nginx:
+#    external: true
