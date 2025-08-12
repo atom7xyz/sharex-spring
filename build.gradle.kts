@@ -67,10 +67,7 @@ graalvmNative {
                 "-H:+PrintAnalysisCallTree",
                 "--enable-url-protocols=http",
                 "--no-fallback", // Force full native build
-                "--initialize-at-build-time=" +                         // Classes to initialize during image build
-                        "org.slf4j.LoggerFactory," +                    // Logging framework initialization
-                        "ch.qos.logback," +                             // Logback configuration
-                        "org.springframework.boot.SpringApplication"    // Spring Boot startup class
+                "--initialize-at-run-time=org.springframework"
             )
 
             // Handle additional arguments from properties more safely
