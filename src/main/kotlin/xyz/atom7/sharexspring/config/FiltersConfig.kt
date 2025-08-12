@@ -12,12 +12,10 @@ import xyz.atom7.sharexspring.security.filters.RateLimitFilter
 
 @Configuration
 @ComponentScan("xyz.atom7.sharexspring.security.filters")
-class FiltersConfig
-{
+class FiltersConfig {
 
     @Bean
-    fun rateLimitFilterRegistration(rateLimitFilter: RateLimitFilter): FilterRegistrationBean<RateLimitFilter>
-    {
+    fun rateLimitFilterRegistration(rateLimitFilter: RateLimitFilter): FilterRegistrationBean<RateLimitFilter> {
         val registrationBean = FilterRegistrationBean<RateLimitFilter>()
 
         registrationBean.filter = rateLimitFilter
@@ -28,8 +26,7 @@ class FiltersConfig
     }
 
     @Bean
-    fun apiKeyFilterRegistration(apiKeyFilter: ApiKeyFilter): FilterRegistrationBean<ApiKeyFilter>
-    {
+    fun apiKeyFilterRegistration(apiKeyFilter: ApiKeyFilter): FilterRegistrationBean<ApiKeyFilter> {
         val registrationBean = FilterRegistrationBean<ApiKeyFilter>()
 
         registrationBean.filter = apiKeyFilter
@@ -45,8 +42,7 @@ class FiltersConfig
      * to get the details of the user via the HTTP Headers.
      */
     @Bean
-    fun forwardedHeaderFilter(): FilterRegistrationBean<ForwardedHeaderFilter>
-    {
+    fun forwardedHeaderFilter(): FilterRegistrationBean<ForwardedHeaderFilter> {
         val registrationBean = FilterRegistrationBean(ForwardedHeaderFilter())
 
         registrationBean.setDispatcherTypes(DispatcherType.REQUEST, DispatcherType.ASYNC, DispatcherType.ERROR)

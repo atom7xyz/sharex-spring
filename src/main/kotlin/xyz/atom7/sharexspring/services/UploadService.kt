@@ -41,8 +41,7 @@ class UploadService(
     val getBaseDirectory: Path
         get() = Paths.get(uploadDirectory).normalize().toAbsolutePath()
 
-    fun uploadFile(file: MultipartFile): ResponseEntity<String>
-    {
+    fun uploadFile(file: MultipartFile): ResponseEntity<String> {
         if (file.isEmpty) {
             return ResponseEntity("File is empty?!", HttpStatus.BAD_REQUEST)
         }
@@ -64,15 +63,13 @@ class UploadService(
             }
 
             ResponseEntity("$uploadedFilesPath$fileName", HttpStatus.OK)
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             ResponseEntity("Failed to upload file: ${e.message}", HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
     @Throws(FileNotFoundException::class)
-    fun getFile(file: String): Path
-    {
+    fun getFile(file: String): Path {
         val baseDirectory = getBaseDirectory.normalize().toAbsolutePath()
         val filePath = baseDirectory.resolve(file).normalize().toAbsolutePath()
 
@@ -87,16 +84,14 @@ class UploadService(
         return filePath
     }
 
-    private fun generateFileName(length: Int, fileExtension: String): Path
-    {
+    private fun generateFileName(length: Int, fileExtension: String): Path {
         val fileName = generateRandomString(length) + "." + fileExtension
         val filePath = Paths.get(uploadDirectory, fileName)
 
         return filePath
     }
 
-    private fun generateUniqueFileName(length: Int, fileExtension: String): Path
-    {
+    private fun generateUniqueFileName(length: Int, fileExtension: String): Path {
         var generated = generateFileName(length, fileExtension)
 
         while (Files.exists(generated)) {

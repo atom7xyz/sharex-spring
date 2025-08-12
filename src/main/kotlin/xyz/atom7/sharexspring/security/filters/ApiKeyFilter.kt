@@ -20,8 +20,8 @@ class ApiKeyFilter(
     @param:Value("\${app.security.api-key}")
     private val validApiKey: String,
     private val rateLimiterApiKeyService: RateLimiterApiKeyService
-) : Filter
-{
+) : Filter {
+
     companion object {
         const val HEADER: String = "X-API-KEY"
         const val HEADER_DEFAULT: String = "changeme"
@@ -36,19 +36,18 @@ class ApiKeyFilter(
         }
     }
 
-    override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain)
-    {
+    override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
         val httpRequest = request as HttpServletRequest
         val httpResponse = response as HttpServletResponse
         val address = httpRequest.remoteAddr
 
         val apiKey = httpRequest.getHeader(HEADER)?.trim()
-        
+
         if (apiKey.isNullOrEmpty()) {
             httpResponse.sendError(HttpStatus.UNAUTHORIZED.value(), "Missing API key")
             return
         }
-        
+
         if (!MessageDigest.isEqual(apiKey.toByteArray(), validApiKey.toByteArray())) {
             rateLimiterApiKeyService.consume(address)
             httpResponse.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized")
@@ -57,4 +56,5 @@ class ApiKeyFilter(
 
         chain.doFilter(httpRequest, httpResponse)
     }
+
 }

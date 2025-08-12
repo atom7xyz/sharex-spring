@@ -15,17 +15,16 @@ class CacheConfig(
     @param:Value("\${app.caching.ttl}")
     private val cacheTtl: Long
 ) {
+
     @Bean
-    fun caffeineConfig(scheduler: Scheduler): Caffeine<Any, Any>
-    {
+    fun caffeineConfig(scheduler: Scheduler): Caffeine<Any, Any> {
         return Caffeine.newBuilder()
             .expireAfterAccess(cacheTtl, TimeUnit.MINUTES)
             .scheduler(scheduler)
     }
 
     @Bean
-    fun cacheManager(caffeine: Caffeine<Any, Any>): CacheManager
-    {
+    fun cacheManager(caffeine: Caffeine<Any, Any>): CacheManager {
         val cacheManager = CaffeineCacheManager()
         cacheManager.setCaffeine(caffeine)
         cacheManager.setCacheNames(setOf("originUrls", "targetUrls"))

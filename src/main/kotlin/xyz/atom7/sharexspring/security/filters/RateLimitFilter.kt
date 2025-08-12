@@ -15,10 +15,9 @@ import xyz.atom7.sharexspring.services.RateLimiterApiKeyService
 class RateLimitFilter(
     private val rateLimiterActionService: RateLimiterActionService,
     private val rateLimiterApiKeyService: RateLimiterApiKeyService
-) : Filter
-{
-    override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain)
-    {
+) : Filter {
+
+    override fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
         val httpRequest = request as HttpServletRequest
         val httpResponse = response as HttpServletResponse
 

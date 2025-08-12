@@ -17,16 +17,13 @@ class FileShareController(
 ) {
 
     @PostMapping
-    fun uploadFile(@RequestParam file: MultipartFile): ResponseEntity<String>
-    {
+    fun uploadFile(@RequestParam file: MultipartFile): ResponseEntity<String> {
         return uploadService.uploadFile(file)
     }
 
     @GetMapping("/{file}")
-    fun getFile(@PathVariable file: String): Any
-    {
-        return try
-        {
+    fun getFile(@PathVariable file: String): Any {
+        return try {
             val filePath = uploadService.getFile(file)
             val fileSize = Files.size(filePath)
 
@@ -40,9 +37,9 @@ class FileShareController(
                 .contentType(mediaType)
                 .contentLength(fileSize)
                 .body(resource)
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             ResponseEntity(e.message, HttpStatus.NOT_FOUND)
         }
     }
+
 }

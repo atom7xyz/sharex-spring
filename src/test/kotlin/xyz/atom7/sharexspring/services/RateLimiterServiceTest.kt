@@ -9,8 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import java.util.concurrent.Executors
 
 @SpringBootTest
-class RateLimiterServiceTest
-{
+class RateLimiterServiceTest {
     @field:Value("\${app.security.rate-limit-action}")
     private var rateLimitAction: Int = 0
 
@@ -30,38 +29,34 @@ class RateLimiterServiceTest
     }
 
     @Test
-    fun `should not reach rate limit initially for Actions`()
-    {
+    fun `should not reach rate limit initially for Actions`() {
         val address = "127.0.0.1"
         assertFalse(rateLimiterActionService.limitReached(address))
     }
 
     @Test
-    fun `should reach rate limit after exceeding threshold for Actions`()
-    {
+    fun `should reach rate limit after exceeding threshold for Actions`() {
         val address = "127.0.0.1"
-        var consumed = false;
-        
+        var consumed = false
+
         repeat(rateLimitAction + 1) {
             consumed = rateLimiterActionService.consume(address)
         }
-        
+
         assertTrue(consumed)
         assertTrue(rateLimiterActionService.limitReached(address))
     }
 
     @Test
-    fun `should not reach rate limit initially for ApiKey`()
-    {
+    fun `should not reach rate limit initially for ApiKey`() {
         val address = "127.0.0.1"
         assertFalse(rateLimiterApiKeyService.limitReached(address))
     }
 
     @Test
-    fun `should reach rate limit after exceeding threshold for ApiKey`()
-    {
+    fun `should reach rate limit after exceeding threshold for ApiKey`() {
         val address = "127.0.0.1"
-        var consumed = false;
+        var consumed = false
 
         repeat(rateLimitWrongApiKey + 1) {
             consumed = rateLimiterApiKeyService.consume(address)

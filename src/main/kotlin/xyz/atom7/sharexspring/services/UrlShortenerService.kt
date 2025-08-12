@@ -23,8 +23,7 @@ class UrlShortenerService(
 ) {
 
     @Cacheable(value = ["originUrls"], key = "#originUrl")
-    fun shortenUrl(originUrl: String): ResponseEntity<String>
-    {
+    fun shortenUrl(originUrl: String): ResponseEntity<String> {
         if (!isValidUrl(originUrl)) {
             return ResponseEntity("Invalid URL format", HttpStatus.BAD_REQUEST)
         }
@@ -47,24 +46,21 @@ class UrlShortenerService(
 
     @Cacheable(value = ["targetUrls"], key = "#targetUrl")
     @Throws(ResponseStatusException::class)
-    fun getUrl(targetUrl: String): ShortenedUrl?
-    {
+    fun getUrl(targetUrl: String): ShortenedUrl? {
         return urlRepository.findShortenedUrlByTargetUrl(targetUrl).orElseThrow {
             NullPointerException("Redirection for this link brings nowhere!")
         }
     }
 
-    private fun findNonOccupiedUrl(length: Int): String
-    {
+    private fun findNonOccupiedUrl(length: Int): String {
         var generated = generateRandomString(length)
 
-        try
-        {
+        try {
             while (getUrl(generated) != null) { // bypass of @Cacheable is intended, no cache pollution!
                 generated = generateRandomString(length)
             }
+        } catch (_: Exception) {
         }
-        catch (_: Exception) { }
 
         return generated
     }

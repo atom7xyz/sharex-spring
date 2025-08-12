@@ -4,7 +4,9 @@
     "methods": [
       {
         "name": "main",
-        "parameterTypes": ["[Ljava.lang.String;"]
+        "parameterTypes": [
+          "[Ljava.lang.String;"
+        ]
       }
     ]
   }

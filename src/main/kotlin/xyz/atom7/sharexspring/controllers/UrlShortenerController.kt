@@ -10,24 +10,21 @@ import xyz.atom7.sharexspring.services.UrlShortenerService
 @RequestMapping("/share/s")
 class UrlShortenerController(
     private val urlShortenerService: UrlShortenerService
-)
-{
+) {
+
     @PostMapping
-    fun shortenUrl(@RequestParam url: String): ResponseEntity<String>
-    {
+    fun shortenUrl(@RequestParam url: String): ResponseEntity<String> {
         return urlShortenerService.shortenUrl(url)
     }
 
     @GetMapping("/{url}")
-    fun gotoTargetUrl(@PathVariable url: String): Any
-    {
-        return try
-        {
+    fun gotoTargetUrl(@PathVariable url: String): Any {
+        return try {
             val target = urlShortenerService.getUrl(url)!!.originUrl
             RedirectView(target)
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             ResponseEntity(e.message, HttpStatus.NOT_FOUND)
         }
     }
+
 }
