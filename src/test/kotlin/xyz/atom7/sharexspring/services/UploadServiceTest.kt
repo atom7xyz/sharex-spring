@@ -5,34 +5,36 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
 import org.springframework.mock.web.MockMultipartFile
+import org.springframework.test.context.TestConstructor
+import xyz.atom7.sharexspring.config.properties.AppProperties
+import xyz.atom7.sharexspring.config.properties.app.LimitsProperties
+import xyz.atom7.sharexspring.config.properties.app.PublicProperties
 import java.nio.file.Path
 
 @SpringBootTest
-class UploadServiceTest {
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
+class UploadServiceTest(
+    private val appProperties: AppProperties,
+    publicProperties: PublicProperties
+) {
+    private val uploadedFilesPath: String = publicProperties.uploadedFiles
+    private val limitFileSizeKB: Long = 1024
+
     private lateinit var uploadService: UploadService
 
     @TempDir
     lateinit var tempDir: Path
 
-    @field:Value("\${app.public.uploaded-files}")
-    private val uploadedFilesPath: String = ""
-
-    @field:Value("\${app.limits.file-uploader.generated-name-length}")
-    private val limitFileNameLength: Int = 0
-
-    private val limitFileSizeKB: Long = 1024
-
     @BeforeEach
     fun setup() {
+        appProperties.file.uploadDirectory = tempDir.toString()
+        appProperties.limitsProperties.fileUploader.size = limitFileSizeKB
+
         uploadService = UploadService(
-            tempDir.toString(),
-            uploadedFilesPath,
-            limitFileNameLength,
-            limitFileSizeKB
+            appProperties = appProperties
         )
     }
 
@@ -49,7 +51,7 @@ class UploadServiceTest {
             "file",
             "test.txt",
             "text/plain",
-            ByteArray(limitFileSizeKB.toInt() * 1024 + 1)
+            ByteArray((limitFileSizeKB * 1024 + 1).toInt())
         )
         val response = uploadService.uploadFile(largeFile)
         assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
@@ -65,4 +67,5 @@ class UploadServiceTest {
         assertEquals(HttpStatus.OK, response.statusCode)
         assertTrue(response.body?.startsWith(uploadedFilesPath) ?: false)
     }
+
 } 

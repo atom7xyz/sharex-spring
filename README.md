@@ -17,19 +17,20 @@ A self-hosted server for ShareX, supporting image uploads, text sharing, file ho
 
 ## Features
 
-| Feature                          | Implemented | Description                                                               |
-|----------------------------------|-------------|---------------------------------------------------------------------------|
-| File/Image/Text Uploader Service | Yes         | Multi-format support (e.g., PNG, JPG, TXT).                               |
-| URL Shortener Service            | Yes         | Binds a long URL to a unique, shortened alias for easy sharing.           |
-| API Key Authenticator            | Yes, basic  | REST API authentication via a single API KEY.                             |
-| Request Rate Limiter             | Yes         | Sliding Window Log algorithm for throttling (default: 50 req/min per IP). |
-| Customizable File Limits         | Yes, basic  | User-defined file size restrictions (default: 50MB/file).                 |
-| Caching (In-Memory)              | Yes, basic  | Caching for frequent requests (default TTL: 1h).                          |
-| Docker Support                   | Yes         | Pre-configured Docker compose files.                                      |
-| Duplicate checker                | No          | *Planned:* Checks and handles duplicates in the uploads.                  |
-| Web interface                    | No          | *Planned:* Web interface to interact with uploaded images                 |
-| Account creation                 | No          | *Planned:* Account creation for other users.                              |
-| Logging & Analytics              | No          | *Planned*: Real-time request logs and dashboard for usage metrics.        |
+| Feature                          | Implemented | Description                                                        |
+|----------------------------------|-------------|--------------------------------------------------------------------|
+| File/Image/Text Uploader Service | Yes         | Multi-format support (e.g., PNG, JPG, TXT).                        |
+| URL Shortener Service            | Yes         | Binds a long URL to a unique, shortened alias for easy sharing.    |
+| Built in HTTPS Support           | Yes         | Secure communication via HTTPS (keystore/certificates).            |
+| API Key Authenticator            | Yes, basic  | REST API authentication via a single API KEY.                      |
+| Request Rate Limiter             | Yes         | Sliding Window Log algorithm for throttling.                       |
+| Customizable File Limits         | Yes, basic  | User-defined file size restrictions (default: 50MB/file).          |
+| Caching (In-Memory)              | Yes, basic  | Caching for frequent requests.                                     |
+| Docker Support                   | Yes         | Pre-configured Docker compose files.                               |
+| Duplicate checker                | No          | *Planned:* Checks and handles duplicates in the uploads.           |
+| Web interface                    | No          | *Planned:* Web interface to interact with uploaded images          |
+| Account creation                 | No          | *Planned:* Account creation for other users.                       |
+| Logging & Analytics              | No          | *Planned*: Real-time request logs and dashboard for usage metrics. |
 
 ---
 

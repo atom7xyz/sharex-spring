@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
+import xyz.atom7.sharexspring.config.properties.app.LimitsProperties
+import xyz.atom7.sharexspring.config.properties.app.PublicProperties
 import xyz.atom7.sharexspring.domain.entities.ShortenedUrl
 import xyz.atom7.sharexspring.domain.repositories.UrlRepository
 import xyz.atom7.sharexspring.utils.generateRandomString
@@ -14,13 +16,11 @@ import java.net.URI
 @Service
 class UrlShortenerService(
     private val urlRepository: UrlRepository,
-
-    @param:Value("\${app.public.shortened-urls}")
-    private val shortenedUrlsPath: String,
-
-    @param:Value("\${app.limits.url-shortener.generated-name-length}")
-    private val limitUrlNameLength: Int
+    publicProperties: PublicProperties,
+    limitsProperties: LimitsProperties,
 ) {
+    private val shortenedUrls: String = publicProperties.shortenedUrls
+    private val generatedNameLength: Int = limitsProperties.urlShortener.generatedNameLength
 
     @Cacheable(value = ["originUrls"], key = "#originUrl")
     fun shortenUrl(originUrl: String): ResponseEntity<String> {
@@ -31,17 +31,17 @@ class UrlShortenerService(
         val urlFound = urlRepository.findShortenedUrlByOriginUrl(originUrl)
 
         if (urlFound.isPresent) {
-            return ResponseEntity.ok(shortenedUrlsPath + urlFound.get().targetUrl)
+            return ResponseEntity.ok(shortenedUrls + urlFound.get().targetUrl)
         }
 
         val shortenedUrl = ShortenedUrl(
             originUrl = originUrl,
-            targetUrl = findNonOccupiedUrl(limitUrlNameLength)
+            targetUrl = findNonOccupiedUrl(generatedNameLength)
         )
 
         urlRepository.save(shortenedUrl)
 
-        return ResponseEntity.ok(shortenedUrlsPath + shortenedUrl.targetUrl)
+        return ResponseEntity.ok(shortenedUrls + shortenedUrl.targetUrl)
     }
 
     @Cacheable(value = ["targetUrls"], key = "#targetUrl")

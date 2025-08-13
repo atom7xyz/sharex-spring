@@ -1,5 +1,72 @@
 server:
-  port: 9007
+  port: 8443
+
+  #
+  # HTTP2 works only with SSL/TLS enabled.
+  #
+  http2:
+    enabled: true
+
+  ssl:
+    #
+    # Enable SSL/TLS for the server (HTTPS).
+    #
+    enabled: true
+
+    #
+    # "mode" indicates whether to use a certificate file or a Java Keystore, respectively CERTIFICATE or KEYSTORE.
+    #
+    # If you use a certificate file, you need to provide the certificate and private key below in the config.
+    # If you use a Java Keystore, you need to provide the keystore file, type, password, and key alias below in the config.
+    #
+    mode: KEYSTORE # CERTIFICATE or KEYSTORE
+
+    #
+    # For certificate file (PEM format)
+    #
+    # Note: Ensure the certificate and private key files are accessible by the application.
+    # If you use Let's Encrypt, these files are typically located in /etc/letsencrypt/live/yourdomain/
+    # For example, the files would be:
+    #   - fullchain.pem (certificate)
+    #   - privkey.pem (private key)
+    #
+    certificate: file:ssl/cert.pem
+    certificate-private-key: file:ssl/privkey.pem
+    certificate-encryption-key: "" # Optional, used for encrypted private keys
+
+    #
+    # For Java Keystore (alternative to PEM)
+    #
+    # Note: Ensure the keystore file is accessible by the application.
+    # If you use a self-signed certificate or a certificate from a CA, you can create a Java Keystore using the following command:
+    #   keytool -importkeystore -srckeystore keystore.p12 -srcstoretype PKCS12 -destkeystore keystore.jks -deststoretype JKS
+    #
+    key-store: file:ssl/keystore.p12
+    key-store-type: PKCS12
+    key-store-password: ""
+    key-alias: ""
+
+    #
+    # TLS Configuration
+    #
+    # Note: Ensure the TLS version and ciphers are compatible with your clients.
+    # The following configuration is recommended for modern security standards.
+    #
+    # TLSv1.2 and TLSv1.3 are widely supported and secure
+    #
+    # If you need to support older clients, you can add TLSv1.1 or TLSv1.0, but
+    #   it's not recommended due to security vulnerabilities.
+    #
+    protocol: TLS
+    enabled-protocols:
+      - TLSv1.2
+      - TLSv1.3
+    ciphers:
+      - TLS_AES_256_GCM_SHA384
+      - TLS_AES_128_GCM_SHA256
+      - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+      - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+    client-auth: none  # "none", "want", or "need"
 
 spring:
   datasource:
@@ -10,9 +77,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
   servlet:
     multipart:
       max-file-size: 1024MB
@@ -20,17 +85,59 @@ spring:
 
 app:
   security:
-    api-key: "changeme"
-    rate-limit-action: 50 # max requests per minute
-    rate-limit-wrong-api-key: 1 # max requests per minute
 
+    #
+    # The api-key should be a random string and should be shared only with people
+    #   who you trust with uploading/sharing files into your server.
+    #
+    # The API KEY is required only when creating shorten-URLs and uploading files, not for the accessing them.
+    #
+    # Generate a random API KEY here:
+    # https://www.random.org/strings/?num=1&len=32&digits=on&upperalpha=on&loweralpha=on&unique=on&format=html&rnd=new
+    #
+    api-key: "changeme"
+
+    #
+    # This server uses 2 rate-limiters:
+    #   - "actions" which are HTTP requests received
+    #   - "wrong-api-key" which are HTTP requests with a wrong API KEY used
+    #
+    # You can adjust the values of the rate-limiter based on your needs, by default we have:
+    #   - "actions" max 15 requests every 10 seconds
+    #   - "wrong-api-key" max 1 request every 60 seconds (so they can do requests with a wrong api key only once per minute)
+    #
+    rate-limit:
+      action:
+        max-requests: 15 # max requests in (window-duration) seconds
+        window-duration: 10 # in seconds (higher values allow for higher bursts of requests)
+      wrong-api-key:
+        max-requests: 1 # max requests in (window-duration) seconds
+        window-duration: 60 # in seconds (higher values allow for higher bursts of requests)
+
+  #
+  # The URLs for accessing the uploaded files and shortened URLs.
+  # Typically, you want to use an address that is accessible from the internet.
+  #
   public:
     uploaded-files: "http://localhost:9007/share/u/"
     shortened-urls: "http://localhost:9007/share/s/"
 
+  #
+  # The directory where the uploaded files will be stored.
+  #
   file:
     upload-directory: "./uploads/"
 
+  #
+  # We have 2 limits:
+  #   - "file-uploader" which is used for uploading files
+  #   - "url-shortener" which is used for generating shortened URLs
+  #
+  # The "generated-name-length" is the length of the generated names for the files and URLs,
+  #   the longer the name, the more unique entries can be generated (refer to the table below).
+  #
+  # The "size" is the maximum size of the uploaded files in KBytes (default is 50MB).
+  #
   # Generated names table:
   # (length : number of unique entries)
   # 4       : 14,776,336
@@ -40,6 +147,7 @@ app:
   # 12      : 3,226,266,762,397,899,821,056
   # 14      : 12,401,769,434,657,526,912,139,264
   # 16      : 47,672,401,706,823,533,450,263,330,816
+  #
   limits:
     file-uploader:
       generated-name-length: 8
@@ -49,5 +157,9 @@ app:
     url-shortener:
       generated-name-length: 4
 
+  #
+  # Caching configuration, used for caching of the shortened URLs.
+  # The default value (60 minutes) should be sufficient for most use cases.
+  #
   caching:
     ttl: 60 # in minutes

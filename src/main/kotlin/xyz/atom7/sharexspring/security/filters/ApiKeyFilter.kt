@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
+import xyz.atom7.sharexspring.config.properties.app.SecurityProperties
 import xyz.atom7.sharexspring.logging.AppLogger.div
 import xyz.atom7.sharexspring.logging.AppLogger.print
 import xyz.atom7.sharexspring.logging.LogLevel
@@ -17,8 +18,7 @@ import java.security.MessageDigest
 
 @Component
 class ApiKeyFilter(
-    @param:Value("\${app.security.api-key}")
-    private val validApiKey: String,
+    private val securityProperties: SecurityProperties,
     private val rateLimiterApiKeyService: RateLimiterApiKeyService
 ) : Filter {
 
@@ -28,7 +28,7 @@ class ApiKeyFilter(
     }
 
     init {
-        if (validApiKey == HEADER_DEFAULT) {
+        if (securityProperties.apiKey == HEADER_DEFAULT) {
             div(LogLevel.WARN)
             print(LogLevel.WARN, "API Key has default value!")
             print(LogLevel.WARN, "For security reasons set a unique API key in the env: `APP_SECURITY_API-KEY`")
@@ -48,7 +48,7 @@ class ApiKeyFilter(
             return
         }
 
-        if (!MessageDigest.isEqual(apiKey.toByteArray(), validApiKey.toByteArray())) {
+        if (!MessageDigest.isEqual(apiKey.toByteArray(), securityProperties.apiKey.toByteArray())) {
             rateLimiterApiKeyService.consume(address)
             httpResponse.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized")
             return

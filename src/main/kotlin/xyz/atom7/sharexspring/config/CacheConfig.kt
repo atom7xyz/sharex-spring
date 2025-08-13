@@ -7,19 +7,19 @@ import org.springframework.cache.CacheManager
 import org.springframework.cache.caffeine.CaffeineCacheManager
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import xyz.atom7.sharexspring.config.properties.AppProperties
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 @Configuration
 class CacheConfig(
-    @param:Value("\${app.caching.ttl}")
-    private val cacheTtl: Long
+    private val appProperties: AppProperties
 ) {
 
     @Bean
     fun caffeineConfig(scheduler: Scheduler): Caffeine<Any, Any> {
         return Caffeine.newBuilder()
-            .expireAfterAccess(cacheTtl, TimeUnit.MINUTES)
+            .expireAfterAccess(appProperties.caching.ttl, TimeUnit.MINUTES)
             .scheduler(scheduler)
     }
 

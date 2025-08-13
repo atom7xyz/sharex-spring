@@ -4,48 +4,48 @@ import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.benmanes.caffeine.cache.Scheduler
 import java.time.Duration
-import java.util.concurrent.atomic.AtomicInteger
 
 open class SlidingWindowLogRateLimiter(
     private val limit: Int,
     private val windowDuration: Duration,
     private val scheduler: Scheduler
-) : RateLimiter<String, AtomicInteger> {
+) : RateLimiter<String> {
 
     private var windows: Cache<String, WindowState> = Caffeine.newBuilder()
-        .expireAfterAccess(windowDuration)
+        .expireAfterAccess(windowDuration.multipliedBy(2))
         .scheduler(scheduler)
         .build()
 
     override fun consume(target: String): Boolean {
-        val windowState = getOrCreateWindow(target)
+        val limitNotReached = !limitReached(target)
 
-        cleanExpiredRequests(windowState, System.currentTimeMillis())
-        signHit(target)
+        if (limitNotReached) {
+            signHit(target)
+        }
 
-        return limitReached(target)
+        return limitNotReached
     }
 
     override fun limitReached(target: String): Boolean {
-        val windowState = windows.getIfPresent(target) ?: return false
-        cleanExpiredRequests(windowState, System.currentTimeMillis())
-        return windowState.requestLog.size > limit
+        return count(target) >= limit
     }
 
     override fun signHit(target: String) {
         val currentTime = System.currentTimeMillis()
         val windowState = getOrCreateWindow(target)
+
         windowState.requestLog.offer(currentTime)
+        windowState.requestCounter.incrementAndGet()
     }
 
     override fun count(target: String): Int {
-        val windowState = windows.getIfPresent(target) ?: return -1
-        return windowState.requestLog.size
+        val windowState = windows.getIfPresent(target) ?: return 0
+        cleanExpiredRequests(windowState, System.currentTimeMillis())
+        return windowState.requestCounter.get()
     }
 
     override fun getRemainingRequests(target: String): Int {
-        val currentCount = count(target)
-        return maxOf(0, limit - currentCount)
+        return maxOf(0, limit - count(target))
     }
 
     override fun getTimeUntilReset(target: String): Duration {
@@ -75,6 +75,8 @@ open class SlidingWindowLogRateLimiter(
                 break
             }
             windowState.requestLog.poll()
+            windowState.requestCounter.decrementAndGet()
         }
     }
+
 }

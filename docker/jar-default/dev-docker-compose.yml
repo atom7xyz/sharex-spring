@@ -13,28 +13,53 @@ services:
     working_dir: /app
     volumes:
       - ../../:/app
+      - ../../ssl:/app/ssl  # Mount SSL certificates directory
     environment:
-      - SERVER_PORT=9007
+      # SERVER CONFIGURATION
+      - SERVER_PORT=8443
+      - SERVER_HTTP2_ENABLED=true
+      - SERVER_SSL_ENABLED=false
+      - SERVER_SSL_MODE=KEYSTORE
+      # SERVER SSL KEYSTORE (if using KEYSTORE mode)
+      - SERVER_SSL_KEY_STORE=file:ssl/keystore.p12
+      - SERVER_SSL_KEY_STORE_TYPE=PKCS12
+      - SERVER_SSL_KEY_STORE_PASSWORD=
+      - SERVER_SSL_KEY_ALIAS=
+      # SERVER SSL CERTIFICATE (if using CERTIFICATE mode)
+      - SERVER_SSL_CERTIFICATE=file:ssl/cert.pem
+      - SERVER_SSL_CERTIFICATE_PRIVATE_KEY=file:ssl/privkey.pem
+      - SERVER_SSL_CERTIFICATE_ENCRYPTION_KEY=
+      # SERVER SSL TLS CONFIGURATION
+      - SERVER_SSL_PROTOCOL=TLS
+      - SERVER_SSL_ENABLED_PROTOCOLS=TLSv1.2,TLSv1.3
+      - SERVER_SSL_CLIENT_AUTH=none
       # DATABASE CONNECTIVITY
       - SPRING_DATASOURCE_URL=jdbc:postgresql://sharex-database:5432/db_sharex
       - SPRING_DATASOURCE_USERNAME=sharex_user
       - SPRING_DATASOURCE_PASSWORD=sharex_password
+      # MULTIPART CONFIGURATION
+      - SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE=1024MB
+      - SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE=1024MB
       # APPLICATION SECURITY
       - APP_SECURITY_API_KEY=changeme
-      - APP_SECURITY_RATE_LIMIT_ACTION=5
-      - APP_SECURITY_RATE_LIMIT_WRONG_API_KEY=1
-      # PUBLIC ENDPOINTS
-      - APP_PUBLIC_UPLOADED_FILES=https://YOUR_DOMAIN/share/u/
-      - APP_PUBLIC_SHORTENED_URLS=https://YOUR_DOMAIN/share/s/
+      - APP_SECURITY_RATE_LIMIT_ACTION_MAX_REQUESTS=15
+      - APP_SECURITY_RATE_LIMIT_ACTION_WINDOW_DURATION=10
+      - APP_SECURITY_RATE_LIMIT_WRONG_API_KEY_MAX_REQUESTS=1
+      - APP_SECURITY_RATE_LIMIT_WRONG_API_KEY_WINDOW_DURATION=60
+      # PUBLIC ENDPOINTS (Update these to use HTTPS and port 8443)
+      - APP_PUBLIC_UPLOADED_FILES=https://YOUR_DOMAIN:8443/share/u/
+      - APP_PUBLIC_SHORTENED_URLS=https://YOUR_DOMAIN:8443/share/s/
       # FILE UPLOAD DIRECTORY
       - APP_FILE_UPLOAD_DIRECTORY=./uploads/
       # APPLICATION LIMITS
       - APP_LIMITS_FILE_UPLOADER_GENERATED_NAME_LENGTH=8
       - APP_LIMITS_FILE_UPLOADER_SIZE=51200
       - APP_LIMITS_URL_SHORTENER_GENERATED_NAME_LENGTH=4
+      # CACHING CONFIGURATION
+      - APP_CACHING_TTL=60
     ports:
-      - "9007:9007"
-    command: ["java", "-jar", "./build/libs/sharex-spring-0.0.11.jar"]
+      - "8443:8443"
+    command: ["java", "-jar", "./build/libs/sharex-spring-0.0.13.jar"]
     restart: unless-stopped
     user: "1000:1000"
     depends_on:

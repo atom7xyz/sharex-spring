@@ -1,32 +1,19 @@
 package xyz.atom7.sharexspring.services
 
-import com.github.benmanes.caffeine.cache.Scheduler
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
-import java.util.concurrent.Executors
+import org.springframework.test.context.TestConstructor
+import xyz.atom7.sharexspring.config.properties.app.RateLimitProperties
 
 @SpringBootTest
-class RateLimiterServiceTest {
-    @field:Value("\${app.security.rate-limit-action}")
-    private var rateLimitAction: Int = 0
-
-    @field:Value("\${app.security.rate-limit-wrong-api-key}")
-    private var rateLimitWrongApiKey: Int = 0
-
-    private val cacheCleanupScheduler = Scheduler.forScheduledExecutorService(
-        Executors.newSingleThreadScheduledExecutor()
-    )
-
-    private val rateLimiterActionService by lazy {
-        RateLimiterActionService(rateLimitAction, cacheCleanupScheduler)
-    }
-
-    private val rateLimiterApiKeyService by lazy {
-        RateLimiterApiKeyService(rateLimitWrongApiKey, cacheCleanupScheduler)
-    }
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
+class RateLimiterServiceTest(
+    private val rateLimitProperties: RateLimitProperties,
+    private val rateLimiterActionService: RateLimiterActionService,
+    private val rateLimiterApiKeyService: RateLimiterApiKeyService
+) {
 
     @Test
     fun `should not reach rate limit initially for Actions`() {
@@ -36,33 +23,33 @@ class RateLimiterServiceTest {
 
     @Test
     fun `should reach rate limit after exceeding threshold for Actions`() {
-        val address = "127.0.0.1"
+        val address = "127.0.0.2"
         var consumed = false
 
-        repeat(rateLimitAction + 1) {
+        repeat(rateLimitProperties.action.maxRequests + 1) {
             consumed = rateLimiterActionService.consume(address)
         }
 
-        assertTrue(consumed)
+        assertFalse(consumed)
         assertTrue(rateLimiterActionService.limitReached(address))
     }
 
     @Test
     fun `should not reach rate limit initially for ApiKey`() {
-        val address = "127.0.0.1"
+        val address = "127.0.0.3"
         assertFalse(rateLimiterApiKeyService.limitReached(address))
     }
 
     @Test
     fun `should reach rate limit after exceeding threshold for ApiKey`() {
-        val address = "127.0.0.1"
+        val address = "127.0.0.4"
         var consumed = false
 
-        repeat(rateLimitWrongApiKey + 1) {
+        repeat(rateLimitProperties.wrongApiKey.maxRequests + 1) {
             consumed = rateLimiterApiKeyService.consume(address)
         }
 
-        assertTrue(consumed)
+        assertFalse(consumed)
         assertTrue(rateLimiterApiKeyService.limitReached(address))
     }
 }

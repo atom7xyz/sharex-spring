@@ -1,14 +1,14 @@
 plugins {
-    kotlin("jvm") version "2.2.0"
-    kotlin("plugin.spring") version "2.2.0"
+    kotlin("jvm") version "2.2.20-Beta2"
+    kotlin("plugin.spring") version "2.2.20-Beta2"
     id("org.springframework.boot") version "3.4.1"
     id("io.spring.dependency-management") version "1.1.7"
-    id("org.graalvm.buildtools.native") version "0.10.6"
+    id("org.graalvm.buildtools.native") version "0.11.0"
     id("org.jetbrains.kotlin.plugin.jpa") version "2.2.20-Beta2"
 }
 
 group = "xyz.atom7"
-version = "0.0.12"
+version = "0.0.13"
 
 java {
     toolchain {
@@ -29,6 +29,8 @@ dependencies {
     implementation("com.github.ben-manes.caffeine:caffeine:3.2.1")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    testImplementation("org.springframework.security:spring-security-test")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("org.postgresql:postgresql")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")

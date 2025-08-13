@@ -5,31 +5,33 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
+import org.springframework.test.context.TestConstructor
+import xyz.atom7.sharexspring.config.properties.app.LimitsProperties
+import xyz.atom7.sharexspring.config.properties.app.PublicProperties
 import xyz.atom7.sharexspring.domain.entities.ShortenedUrl
 import xyz.atom7.sharexspring.domain.repositories.UrlRepository
 import java.util.*
 
 @SpringBootTest
-class UrlShortenerServiceTest {
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
+class UrlShortenerServiceTest(
+    private val publicProperties: PublicProperties,
+    private val limitsProperties: LimitsProperties
+) {
+    private val shortenedUrlsPath: String = publicProperties.shortenedUrls
+
     private lateinit var urlShortenerService: UrlShortenerService
     private lateinit var urlRepository: UrlRepository
-
-    @field:Value("\${app.public.shortened-urls}")
-    private val shortenedUrlsPath: String = ""
-
-    @field:Value("\${app.limits.url-shortener.generated-name-length}")
-    private val limitUrlNameLength: Int = 0
 
     @BeforeEach
     fun setup() {
         urlRepository = mock(UrlRepository::class.java)
         urlShortenerService = UrlShortenerService(
             urlRepository,
-            shortenedUrlsPath,
-            limitUrlNameLength
+            publicProperties = publicProperties,
+            limitsProperties = limitsProperties
         )
     }
 
@@ -67,4 +69,5 @@ class UrlShortenerServiceTest {
         assertTrue(response.body?.startsWith(shortenedUrlsPath) ?: false)
         verify(urlRepository).save(any())
     }
+
 } 

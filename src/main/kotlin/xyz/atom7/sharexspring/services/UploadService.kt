@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
+import xyz.atom7.sharexspring.config.properties.AppProperties
 import xyz.atom7.sharexspring.utils.generateRandomString
 import xyz.atom7.sharexspring.utils.getFileExtension
 import java.io.FileNotFoundException
@@ -14,18 +15,12 @@ import java.nio.file.Paths
 
 @Service
 class UploadService(
-    @param:Value("\${app.file.upload-directory}")
-    private val uploadDirectory: String,
-
-    @param:Value("\${app.public.uploaded-files}")
-    private val uploadedFilesPath: String,
-
-    @param:Value("\${app.limits.file-uploader.generated-name-length}")
-    private val limitFileNameLength: Int,
-
-    @param:Value("\${app.limits.file-uploader.size}")
-    private val limitFileSizeKB: Long
+    appProperties: AppProperties
 ) {
+    private val uploadDirectory: String = appProperties.file.uploadDirectory
+    private val uploadedFilesPath: String = appProperties.publicProperties.uploadedFiles
+    private val generatedNameLength: Int = appProperties.limitsProperties.fileUploader.generatedNameLength
+    private val limitFileSizeKB: Long = appProperties.limitsProperties.fileUploader.size
 
     init {
         val path = Paths.get(uploadDirectory)
@@ -55,7 +50,7 @@ class UploadService(
 
         return try {
             val fileExtension = getFileExtension(file.originalFilename)
-            val path = generateUniqueFileName(limitFileNameLength, fileExtension)
+            val path = generateUniqueFileName(generatedNameLength, fileExtension)
             val fileName = path.fileName.toString()
 
             file.inputStream.use {

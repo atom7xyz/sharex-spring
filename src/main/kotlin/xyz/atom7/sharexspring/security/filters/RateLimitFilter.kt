@@ -23,15 +23,15 @@ class RateLimitFilter(
 
         val address = httpRequest.remoteAddr
 
-        val actionLimitExceeded = rateLimiterActionService.consume(address)
+        val actionLimitExceeded = !rateLimiterActionService.consume(address)
         val wrongApiKeyLimitExceeded = rateLimiterApiKeyService.limitReached(address)
 
-        if (!actionLimitExceeded && !wrongApiKeyLimitExceeded) {
-            chain.doFilter(request, response)
+        if (actionLimitExceeded || wrongApiKeyLimitExceeded) {
+            httpResponse.sendError(HttpStatus.TOO_MANY_REQUESTS.value(), "Rate limit exceeded. Try again later.")
             return
         }
 
-        httpResponse.sendError(HttpStatus.TOO_MANY_REQUESTS.value(), "Rate limit exceeded. Try again later.")
+        chain.doFilter(request, response)
     }
 
 }
