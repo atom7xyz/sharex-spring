@@ -30,5 +30,6 @@ class AppProperties {
 
     class Caching {
         var ttl: Long = 60
+        var maximumSize: Long = 1000
     }
 }

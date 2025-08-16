@@ -12,6 +12,7 @@ import xyz.atom7.sharexspring.config.properties.app.LimitsProperties
 import xyz.atom7.sharexspring.config.properties.app.PublicProperties
 import xyz.atom7.sharexspring.domain.entities.ShortenedUrl
 import xyz.atom7.sharexspring.domain.repositories.UrlRepository
+import xyz.atom7.sharexspring.dto.ShortenUrlRequestDto
 import java.util.*
 
 @SpringBootTest
@@ -36,12 +37,6 @@ class UrlShortenerServiceTest(
     }
 
     @Test
-    fun `shortenUrl should return bad request for invalid URL`() {
-        val response = urlShortenerService.shortenUrl("invalid-url")
-        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
-    }
-
-    @Test
     fun `shortenUrl should return existing URL if already shortened`() {
         val originUrl = "https://example.com"
         val targetUrl = "abcd"
@@ -50,10 +45,9 @@ class UrlShortenerServiceTest(
         `when`(urlRepository.findShortenedUrlByOriginUrl(originUrl))
             .thenReturn(Optional.of(shortenedUrl))
 
-        val response = urlShortenerService.shortenUrl(originUrl)
+        val response = urlShortenerService.shortenUrl(ShortenUrlRequestDto(originUrl))
 
-        assertEquals(HttpStatus.OK, response.statusCode)
-        assertEquals("$shortenedUrlsPath$targetUrl", response.body)
+        assertEquals("$shortenedUrlsPath$targetUrl", response.url)
     }
 
     @Test
@@ -63,10 +57,9 @@ class UrlShortenerServiceTest(
         `when`(urlRepository.findShortenedUrlByOriginUrl(originUrl))
             .thenReturn(Optional.empty())
 
-        val response = urlShortenerService.shortenUrl(originUrl)
+        val response = urlShortenerService.shortenUrl(ShortenUrlRequestDto(originUrl))
 
-        assertEquals(HttpStatus.OK, response.statusCode)
-        assertTrue(response.body?.startsWith(shortenedUrlsPath) ?: false)
+        assertTrue(response.url.startsWith(shortenedUrlsPath))
         verify(urlRepository).save(any())
     }
 

@@ -1,6 +1,5 @@
 package xyz.atom7.sharexspring.services
 
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
@@ -20,7 +19,6 @@ class UploadService(
     private val uploadDirectory: String = appProperties.file.uploadDirectory
     private val uploadedFilesPath: String = appProperties.publicProperties.uploadedFiles
     private val generatedNameLength: Int = appProperties.limitsProperties.fileUploader.generatedNameLength
-    private val limitFileSizeKB: Long = appProperties.limitsProperties.fileUploader.size
 
     init {
         val path = Paths.get(uploadDirectory)
@@ -30,24 +28,10 @@ class UploadService(
         }
     }
 
-    val limitFileSizeInBytes: Long
-        get() = limitFileSizeKB * 1024
-
     val getBaseDirectory: Path
         get() = Paths.get(uploadDirectory).normalize().toAbsolutePath()
 
     fun uploadFile(file: MultipartFile): ResponseEntity<String> {
-        if (file.isEmpty) {
-            return ResponseEntity("File is empty?!", HttpStatus.BAD_REQUEST)
-        }
-
-        if (limitFileSizeKB != -1L && file.size > limitFileSizeInBytes) {
-            return ResponseEntity(
-                "File is too big! (size: ${(file.size / 1024)}KB / max: ${limitFileSizeKB}KB)",
-                HttpStatus.BAD_REQUEST
-            )
-        }
-
         return try {
             val fileExtension = getFileExtension(file.originalFilename)
             val path = generateUniqueFileName(generatedNameLength, fileExtension)

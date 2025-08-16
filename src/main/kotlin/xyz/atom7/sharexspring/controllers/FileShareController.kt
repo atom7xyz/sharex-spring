@@ -1,24 +1,27 @@
 package xyz.atom7.sharexspring.controllers
 
+import jakarta.validation.Valid
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.multipart.MultipartFile
+import xyz.atom7.sharexspring.dto.FileUploadRequestDto
 import xyz.atom7.sharexspring.services.UploadService
 import java.nio.file.Files
 
 @RestController
 @RequestMapping("/share/u")
+@Validated
 class FileShareController(
     private val uploadService: UploadService
 ) {
 
     @PostMapping
-    fun uploadFile(@RequestParam file: MultipartFile): ResponseEntity<String> {
-        return uploadService.uploadFile(file)
+    fun uploadFile(@Valid @ModelAttribute file: FileUploadRequestDto): ResponseEntity<String> {
+        return uploadService.uploadFile(file.file)
     }
 
     @GetMapping("/{file}")

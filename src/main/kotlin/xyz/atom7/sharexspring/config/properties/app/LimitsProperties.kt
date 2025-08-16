@@ -13,6 +13,14 @@ class LimitsProperties {
     class FileUploader {
         var generatedNameLength: Int = 8
         var size: Long = 51200
+        var allowedTypes: Array<String> = arrayOf(
+            "image/jpeg",
+            "image/png",
+            "image/gif",
+            "application/pdf",
+            "text/plain",
+            "video/mp4",
+        )
     }
 
     class UrlShortener {

@@ -11,7 +11,7 @@ server:
     #
     # Enable SSL/TLS for the server (HTTPS).
     #
-    enabled: true
+    enabled: false
 
     #
     # "mode" indicates whether to use a certificate file or a Java Keystore, respectively CERTIFICATE or KEYSTORE.
@@ -119,8 +119,8 @@ app:
   # Typically, you want to use an address that is accessible from the internet.
   #
   public:
-    uploaded-files: "http://localhost:9007/share/u/"
-    shortened-urls: "http://localhost:9007/share/s/"
+    uploaded-files: "http://localhost:8443/share/u/"
+    shortened-urls: "http://localhost:8443/share/s/"
 
   #
   # The directory where the uploaded files will be stored.
@@ -154,6 +154,16 @@ app:
       # `size` is in KBytes
       # value of `-1` defaults to 1024MB (spring.servlet.multipart.max-file-size)
       size: 51200
+      #
+      # Allow only certain extension of files to be shared. Use "*" to allow them all.
+      #
+      allowed-types:
+        - "image/jpeg"
+        - "image/png"
+        - "image/gif"
+        - "application/pdf"
+        - "text/plain"
+        - "video/mp4"
     url-shortener:
       generated-name-length: 4
 
@@ -163,3 +173,4 @@ app:
   #
   caching:
     ttl: 60 # in minutes
+    maximumSize: 1000

@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.context.TestConstructor
 import xyz.atom7.sharexspring.config.properties.AppProperties
-import xyz.atom7.sharexspring.config.properties.app.LimitsProperties
 import xyz.atom7.sharexspring.config.properties.app.PublicProperties
 import java.nio.file.Path
 
@@ -36,25 +35,6 @@ class UploadServiceTest(
         uploadService = UploadService(
             appProperties = appProperties
         )
-    }
-
-    @Test
-    fun `uploadFile should reject empty files`() {
-        val emptyFile = MockMultipartFile("file", "test.txt", "text/plain", ByteArray(0))
-        val response = uploadService.uploadFile(emptyFile)
-        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
-    }
-
-    @Test
-    fun `uploadFile should reject files exceeding size limit`() {
-        val largeFile = MockMultipartFile(
-            "file",
-            "test.txt",
-            "text/plain",
-            ByteArray((limitFileSizeKB * 1024 + 1).toInt())
-        )
-        val response = uploadService.uploadFile(largeFile)
-        assertEquals(HttpStatus.BAD_REQUEST, response.statusCode)
     }
 
     @Test
