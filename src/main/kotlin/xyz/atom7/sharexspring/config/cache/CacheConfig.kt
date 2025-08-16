@@ -48,7 +48,6 @@ class CacheConfig(
     fun cacheManager(caffeineConfig: Caffeine<Any, Any>): CacheManager {
         val cacheManager = CaffeineCacheManager()
         cacheManager.setCaffeine(caffeineConfig)
-        cacheManager.setCacheNames(setOf("shortenUrlReqDto", "targetUrls"))
         return cacheManager
     }
 
