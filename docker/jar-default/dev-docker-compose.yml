@@ -15,6 +15,7 @@ services:
       - ../../:/app
       - ../../ssl:/app/ssl  # Mount SSL certificates directory
     environment:
+      - SPRING_PROFILES_ACTIVE=dev
       # SERVER CONFIGURATION
       - SERVER_PORT=8443
       - SERVER_HTTP2_ENABLED=true

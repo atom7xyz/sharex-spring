@@ -69,9 +69,11 @@ graalvmNative {
                 "-H:+RemoveSaturatedTypeFlows",
                 "-H:+PrintClassInitialization",
                 "-H:+PrintAnalysisCallTree",
+                "-H:+AllowIncompleteClasspath",
                 "--enable-url-protocols=http",
                 "--no-fallback", // Force full native build
-                "--initialize-at-run-time=org.springframework"
+                "--initialize-at-run-time=org.springframework,com.github.benmanes.caffeine",
+                "--initialize-at-build-time=com.github.benmanes.caffeine.cache.NodeFactory"
             )
 
             // Handle additional arguments from properties more safely
