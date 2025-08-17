@@ -3,7 +3,7 @@ plugins {
     kotlin("plugin.spring") version "2.2.20-Beta2"
     id("org.springframework.boot") version "3.4.1"
     id("io.spring.dependency-management") version "1.1.7"
-    id("org.graalvm.buildtools.native") version "0.11.0"
+    // id("org.graalvm.buildtools.native") version "0.11.0"
     id("org.jetbrains.kotlin.plugin.jpa") version "2.2.20-Beta2"
 }
 
@@ -12,9 +12,7 @@ version = "0.0.14"
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(
-            findProperty("java.version")?.toString()?.toInt() ?: 21
-        )
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
@@ -54,37 +52,37 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
-graalvmNative {
-    binaries {
-        named("main") {
-            imageName.set("sharex-spring")
-            mainClass.set("xyz.atom7.sharexspring.SharexSpringApplicationKt")
-
-            buildArgs.addAll(
-                "-O2",
-                "--gc=G1",
-                "-H:+UnlockExperimentalVMOptions",
-                "-H:+ReportExceptionStackTraces",
-                "-H:+ReportUnsupportedElementsAtRuntime",
-                "-H:+RemoveSaturatedTypeFlows",
-                "-H:+PrintClassInitialization",
-                "-H:+PrintAnalysisCallTree",
-                "-H:+AllowIncompleteClasspath",
-                "--enable-url-protocols=http",
-                "--no-fallback", // Force full native build
-                "--initialize-at-run-time=org.springframework,com.github.benmanes.caffeine",
-                "--initialize-at-build-time=com.github.benmanes.caffeine.cache.NodeFactory"
-            )
-
-            // Handle additional arguments from properties more safely
-            project.findProperty("org.graalvm.buildtools.native.additionalArgs")
-                ?.toString()
-                ?.splitToSequence(',')  // Use comma delimiter for safer argument handling
-                ?.filter { it.isNotBlank() }
-                ?.forEach { buildArgs.add(it) }
-        }
-    }
-}
+// graalvmNative {
+//     binaries {
+//         named("main") {
+//             javaLauncher = javaToolchains.launcherFor {
+//                 languageVersion = JavaLanguageVersion.of(21)
+//             }
+//
+//             imageName.set("sharex-spring")
+//             mainClass.set("xyz.atom7.sharexspring.SharexSpringApplicationKt")
+//
+//             buildArgs.addAll(
+//                 "-O2",
+//                 "--gc=G1",
+//                 "-H:+UnlockExperimentalVMOptions",
+//                 "-H:+ReportExceptionStackTraces",
+//                 "-H:+ReportUnsupportedElementsAtRuntime",
+//                 "-H:+RemoveSaturatedTypeFlows",
+//                 "-H:+AllowIncompleteClasspath",
+//                 "--no-fallback", // Force full native build
+//                 "--initialize-at-run-time=org.springframework,com.github.benmanes.caffeine,xyz.atom7.sharexspring",
+//                 "--initialize-at-build-time=com.github.benmanes.caffeine.cache.NodeFactory",
+//             )
+//
+//             project.findProperty("org.graalvm.buildtools.native.additionalArgs")
+//                 ?.toString()
+//                 ?.splitToSequence(',')  // Use comma delimiter for safer argument handling
+//                 ?.filter { it.isNotBlank() }
+//                 ?.forEach { buildArgs.add(it) }
+//         }
+//     }
+// }
 
 tasks.withType<JavaCompile> {
     options.isFork = true
