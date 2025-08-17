@@ -1,14 +1,18 @@
 services:
 
   sharex-builder:
-    image: gradle:8.10-jdk21-alpine
+    image: gradle:9.0.0-jdk21-alpine
+    container_name: sharex-builder
     working_dir: /app
     volumes:
       - ../../:/app
-    command: gradle build -x test
+    environment:
+      - GRADLE_OPTS=-Dorg.gradle.daemon=false
+    command: gradle build -x test --no-daemon
+    restart: "no"
 
   sharex-spring:
-    image: amazoncorretto:21-alpine-jdk
+    image: ghcr.io/graalvm/graalvm-community:21
     container_name: sharex-spring
     working_dir: /app
     volumes:
@@ -49,8 +53,8 @@ services:
       - APP_SECURITY_RATE_LIMIT_WRONG_API_KEY_MAX_REQUESTS=1
       - APP_SECURITY_RATE_LIMIT_WRONG_API_KEY_WINDOW_DURATION=60
       # PUBLIC ENDPOINTS (Update these to use HTTPS and port 8443)
-      - APP_PUBLIC_UPLOADED_FILES=http://YOUR_DOMAIN:8443/share/u/
-      - APP_PUBLIC_SHORTENED_URLS=http://YOUR_DOMAIN:8443/share/s/
+      - APP_PUBLIC_UPLOADED_FILES=http://localhost:8443/share/u/
+      - APP_PUBLIC_SHORTENED_URLS=http://localhost:8443/share/s/
       # FILE UPLOAD DIRECTORY
       - APP_FILE_UPLOAD_DIRECTORY=./uploads/
       # APPLICATION LIMITS
@@ -69,6 +73,8 @@ services:
     depends_on:
       sharex-database:
         condition: service_healthy
+      sharex-builder:
+        condition: service_completed_successfully
     #networks:
     #  - shared-nginx
 

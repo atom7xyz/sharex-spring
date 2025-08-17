@@ -5,7 +5,7 @@
 services:
 
   sharex-spring:
-    image: amazoncorretto:21-alpine-jdk
+    image: ghcr.io/graalvm/graalvm-community:21-ol8
     container_name: sharex-spring
     working_dir: /app
     volumes:
