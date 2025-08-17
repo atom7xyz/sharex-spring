@@ -31,12 +31,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup GraalVM JDK
-        uses: graalvm/setup-graalvm@v1
+      - name: Set up JDK
+        uses: actions/setup-java@v4
         with:
           java-version: '21'
-          distribution: 'graalvm'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          distribution: 'corretto'
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
@@ -68,7 +67,7 @@ jobs:
 
   build-native:
     name: Native Build with GraalVM
-    if: env.SKIP_NATIVE == 'false'
+    if: github.event.inputs.skip_native != 'true'
     strategy:
       matrix:
         architecture: [amd64, arm64]
@@ -142,8 +141,8 @@ jobs:
         with:
           files: |
             artifacts/sharex-spring-jar/sharex-spring-*-default.jar
-            ${{ env.SKIP_NATIVE == 'false' && 'artifacts/sharex-spring-x86_64/sharex-spring-*-amd64' || '' }}
-            ${{ env.SKIP_NATIVE == 'false' && 'artifacts/sharex-spring-arm64/sharex-spring-*-arm64' || '' }}
+            ${{ github.event.inputs.skip_native != 'true' && 'artifacts/sharex-spring-x86_64/sharex-spring-*-amd64' || '' }}
+            ${{ github.event.inputs.skip_native != 'true' && 'artifacts/sharex-spring-arm64/sharex-spring-*-arm64' || '' }}
           name: ${{ env.VERSION }}
           generate_release_notes: true
         env:
