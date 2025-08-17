@@ -9,8 +9,7 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import xyz.atom7.sharexspring.config.properties.app.SecurityProperties
-import xyz.atom7.sharexspring.logging.AppLogger.div
-import xyz.atom7.sharexspring.logging.AppLogger.print
+import xyz.atom7.sharexspring.logging.AppLogger
 import xyz.atom7.sharexspring.logging.LogLevel
 import xyz.atom7.sharexspring.services.RateLimiterApiKeyService
 import java.security.MessageDigest
@@ -18,7 +17,8 @@ import java.security.MessageDigest
 @Component
 class ApiKeyFilter(
     private val securityProperties: SecurityProperties,
-    private val rateLimiterApiKeyService: RateLimiterApiKeyService
+    private val rateLimiterApiKeyService: RateLimiterApiKeyService,
+    logger: AppLogger
 ) : Filter {
 
     companion object {
@@ -28,10 +28,10 @@ class ApiKeyFilter(
 
     init {
         if (securityProperties.apiKey == HEADER_DEFAULT) {
-            div(LogLevel.WARN)
-            print(LogLevel.WARN, "API Key has default value!")
-            print(LogLevel.WARN, "For security reasons set a unique API key in the env: `APP_SECURITY_API-KEY`")
-            div(LogLevel.WARN)
+            logger.div(LogLevel.WARN)
+            logger.print(LogLevel.WARN, "API Key has default value!")
+            logger.print(LogLevel.WARN, "For security reasons set a unique API key in the env: `APP_SECURITY_API-KEY`")
+            logger.div(LogLevel.WARN)
         }
     }
 
@@ -43,13 +43,17 @@ class ApiKeyFilter(
         val apiKey = httpRequest.getHeader(HEADER)?.trim()
 
         if (apiKey.isNullOrEmpty()) {
-            httpResponse.sendError(HttpStatus.UNAUTHORIZED.value(), "Missing API key")
+            httpResponse.status = HttpStatus.UNAUTHORIZED.value()
+            httpResponse.contentType = "text/plain"
+            httpResponse.writer.write("Missing API Key.")
             return
         }
 
         if (!MessageDigest.isEqual(apiKey.toByteArray(), securityProperties.apiKey.toByteArray())) {
             rateLimiterApiKeyService.consume(address)
-            httpResponse.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized")
+            httpResponse.status = HttpStatus.UNAUTHORIZED.value()
+            httpResponse.contentType = "text/plain"
+            httpResponse.writer.write("Unauthorized.")
             return
         }
 

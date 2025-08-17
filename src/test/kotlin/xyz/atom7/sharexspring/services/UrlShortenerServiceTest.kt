@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.*
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.HttpStatus
 import org.springframework.test.context.TestConstructor
 import xyz.atom7.sharexspring.config.properties.app.LimitsProperties
 import xyz.atom7.sharexspring.config.properties.app.PublicProperties

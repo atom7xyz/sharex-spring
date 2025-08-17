@@ -1,4 +1,4 @@
-package xyz.atom7.sharexspring.annotations
+package xyz.atom7.sharexspring.annotations.validation
 
 import jakarta.validation.ConstraintValidator
 import jakarta.validation.ConstraintValidatorContext

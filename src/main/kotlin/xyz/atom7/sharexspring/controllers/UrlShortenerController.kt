@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.view.RedirectView
+import xyz.atom7.sharexspring.annotations.aspects.Log
 import xyz.atom7.sharexspring.dto.ShortenUrlRequestDto
 import xyz.atom7.sharexspring.dto.ShortenUrlResponseDto
 import xyz.atom7.sharexspring.exception.ShortenUrlNotFoundException
@@ -18,12 +19,14 @@ class UrlShortenerController(
     private val urlShortenerService: UrlShortenerService
 ) {
 
+    @Log("URL Shortened", includeArgs = true)
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     fun shortenUrl(@Valid @RequestBody url: ShortenUrlRequestDto): ShortenUrlResponseDto {
         return urlShortenerService.shortenUrl(url)
     }
 
+    @Log(action = "Redirected to target URL", includeArgs = true)
     @GetMapping("/{url}")
     fun gotoTargetUrl(
         @PathVariable

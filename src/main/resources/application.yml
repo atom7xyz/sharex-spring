@@ -78,6 +78,12 @@ spring:
     hibernate:
       ddl-auto: update
     open-in-view: false
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
+      database: 0
   servlet:
     multipart:
       max-file-size: 1024MB
@@ -107,6 +113,7 @@ app:
     #   - "wrong-api-key" max 1 request every 60 seconds (so they can do requests with a wrong api key only once per minute)
     #
     rate-limit:
+      algorithm: SLIDING_WINDOW_LOG
       action:
         max-requests: 15 # max requests in (window-duration) seconds
         window-duration: 10 # in seconds (higher values allow for higher bursts of requests)

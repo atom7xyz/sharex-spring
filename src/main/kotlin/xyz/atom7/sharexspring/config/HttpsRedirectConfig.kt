@@ -23,7 +23,7 @@ class HttpsRedirectConfig(
         }
     }
 
-    private fun httpToHttpsRedirectConnector(): Connector? {
+    private fun httpToHttpsRedirectConnector(): Connector {
         val connector = Connector(TomcatServletWebServerFactory.DEFAULT_PROTOCOL)
 
         return connector.apply {

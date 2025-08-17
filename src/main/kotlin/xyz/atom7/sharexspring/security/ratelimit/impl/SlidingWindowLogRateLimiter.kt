@@ -1,8 +1,10 @@
-package xyz.atom7.sharexspring.security.ratelimit
+package xyz.atom7.sharexspring.security.ratelimit.impl
 
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.benmanes.caffeine.cache.Scheduler
+import xyz.atom7.sharexspring.security.ratelimit.RateLimiter
+import xyz.atom7.sharexspring.security.ratelimit.WindowState
 import java.time.Duration
 
 open class SlidingWindowLogRateLimiter(
@@ -52,18 +54,14 @@ open class SlidingWindowLogRateLimiter(
         val windowState = windows.getIfPresent(target) ?: return Duration.ZERO
         val currentTime = System.currentTimeMillis()
 
-        val oldestRequest = windowState.requestLog.peek()
-
-        if (oldestRequest == null) {
-            return Duration.ZERO
-        }
+        val oldestRequest = windowState.requestLog.peek() ?: return Duration.ZERO
 
         val timeUntilExpiry = (oldestRequest + windowDuration.toMillis()) - currentTime
         return Duration.ofMillis(maxOf(0, timeUntilExpiry))
     }
 
     private fun getOrCreateWindow(target: String): WindowState {
-        return windows.get(target) { key -> WindowState() }
+        return windows.get(target) { _ -> WindowState() }
     }
 
     private fun cleanExpiredRequests(windowState: WindowState, currentTime: Long) {

@@ -8,6 +8,7 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import xyz.atom7.sharexspring.annotations.aspects.Log
 import xyz.atom7.sharexspring.dto.FileUploadRequestDto
 import xyz.atom7.sharexspring.services.UploadService
 import java.nio.file.Files
@@ -19,11 +20,14 @@ class FileShareController(
     private val uploadService: UploadService
 ) {
 
+    @Log(action = "File uploaded")
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     fun uploadFile(@Valid @ModelAttribute file: FileUploadRequestDto): ResponseEntity<String> {
         return uploadService.uploadFile(file.file)
     }
 
+    @Log(action = "File served", includeArgs = true)
     @GetMapping("/{file}")
     fun getFile(@PathVariable file: String): Any {
         return try {

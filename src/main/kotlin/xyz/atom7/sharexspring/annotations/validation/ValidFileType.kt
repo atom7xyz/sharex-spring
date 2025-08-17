@@ -1,18 +1,18 @@
-package xyz.atom7.sharexspring.annotations
+package xyz.atom7.sharexspring.annotations.validation
 
 import jakarta.validation.Constraint
 import jakarta.validation.Payload
 import kotlin.reflect.KClass
 
 @MustBeDocumented
-@Constraint(validatedBy = [FileSizeValidator::class])
+@Constraint(validatedBy = [FileTypeValidator::class])
 @Target(AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class ValidFileSize(
+annotation class ValidFileType(
     val groups: Array<KClass<*>> = [],
     val payload: Array<KClass<out Payload>> = [],
 
-    val message: String = "File size exceeds maximum allowed size",
-    val maxSizeInKB: Long = 50,
+    val message: String = "Invalid file type",
+    val allowedTypes: Array<String> = [],
     val useConfig: Boolean = true
 )
