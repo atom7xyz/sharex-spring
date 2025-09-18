@@ -1,19 +1,21 @@
-package xyz.atom7.sharexspring.config
+package xyz.atom7.sharexspring.config.https
 
 import org.springframework.boot.web.server.Ssl
 import org.springframework.context.annotation.Configuration
 import xyz.atom7.sharexspring.config.properties.ServerProperties
+import xyz.atom7.sharexspring.logging.AppLogger
 import java.io.File
 
 @Configuration
 class SslConfig(
     serverProperties: ServerProperties,
+    private val logger: AppLogger
 ) {
     private val sslProp: ServerProperties.Ssl = serverProperties.ssl
 
     fun configureSsl(): Ssl? {
         if (!sslProp.enabled) {
-            println("SSL is disabled in configuration")
+            logger.info("SSL is disabled in configuration")
             return null
         }
 
@@ -21,17 +23,17 @@ class SslConfig(
 
         when {
             hasPemFilesConfigured() -> {
-                println("Using PEM certificate files from configuration")
+                logger.debug( "Using PEM certificate files from configuration")
                 configurePemSsl(ssl)
             }
             hasKeystoreConfigured() -> {
-                println("Using Java keystore from configuration")
+                logger.debug("Using Java keystore from configuration")
                 configureKeystoreSsl(ssl)
             }
             else -> {
-                System.err.println("No SSL certificates configured! Please configure either:")
-                System.err.println("1. PEM files: server.ssl.certificate and server.ssl.certificate-private-key")
-                System.err.println("2. Java keystore: server.ssl.key-store")
+                logger.debug("No SSL certificates configured! Please configure either:")
+                logger.debug("1. PEM files: server.ssl.certificate and server.ssl.certificate-private-key")
+                logger.debug("2. Java keystore: server.ssl.key-store")
                 return null
             }
         }
@@ -67,10 +69,10 @@ class SslConfig(
             ssl.keyPassword = sslProp.certificateEncryptionKey
         }
 
-        println("PEM SSL Configuration:")
-        println("  Certificate: ${sslProp.certificate}")
-        println("  Private Key: ${sslProp.certificatePrivateKey}")
-        println("  Protocol: ${sslProp.protocol}")
+        logger.debug("PEM SSL Configuration:")
+        logger.debug("  Certificate: ${sslProp.certificate}")
+        logger.debug("  Private Key: ${sslProp.certificatePrivateKey}")
+        logger.debug("  Protocol: ${sslProp.protocol}")
     }
 
     private fun configureKeystoreSsl(ssl: Ssl) {
@@ -92,11 +94,11 @@ class SslConfig(
         ssl.ciphers = sslProp.ciphers
         ssl.clientAuth = sslProp.clientAuth
 
-        println("Keystore SSL Configuration:")
-        println("  Keystore: ${sslProp.keyStore}")
-        println("  Type: ${sslProp.keyStoreType}")
-        println("  Alias: ${sslProp.keyAlias}")
-        println("  Protocol: ${sslProp.protocol}")
+        logger.debug("Keystore SSL Configuration:")
+        logger.debug("  Keystore: ${sslProp.keyStore}")
+        logger.debug("  Type: ${sslProp.keyStoreType}")
+        logger.debug("  Alias: ${sslProp.keyAlias}")
+        logger.debug("  Protocol: ${sslProp.protocol}")
     }
 
     private fun fileExistsFromPath(path: String): Boolean {

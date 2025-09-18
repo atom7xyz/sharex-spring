@@ -8,6 +8,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
+import xyz.atom7.sharexspring.exception.impl.ProfileNotActiveException
+import xyz.atom7.sharexspring.exception.impl.ProfileNotFoundException
+import xyz.atom7.sharexspring.exception.impl.ShortenUrlNotFoundException
+import java.io.FileNotFoundException
 
 @ControllerAdvice
 class GlobalExceptionHandler {
@@ -23,7 +27,12 @@ class GlobalExceptionHandler {
         )
     }
 
-    @ExceptionHandler(ShortenUrlNotFoundException::class)
+    @ExceptionHandler(
+        ShortenUrlNotFoundException::class,
+        ProfileNotFoundException::class,
+        ProfileNotActiveException::class,
+        FileNotFoundException::class
+    )
     @ResponseStatus(HttpStatus.NOT_FOUND)
     fun handleShortenUrlNotFoundException(ex: Exception): ResponseEntity<String> {
         return ResponseEntity(ex.message, HttpStatus.NOT_FOUND)
@@ -31,7 +40,9 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException::class)
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
-    fun handleMethodNotSupportedException(ex: HttpRequestMethodNotSupportedException): ResponseEntity<Map<String, String>> {
+    fun handleMethodNotSupportedException(
+        ex: HttpRequestMethodNotSupportedException
+    ): ResponseEntity<Map<String, String>> {
         return ResponseEntity(
             mapOf(
                 "message" to "Method not allowed: ${ex.method}",

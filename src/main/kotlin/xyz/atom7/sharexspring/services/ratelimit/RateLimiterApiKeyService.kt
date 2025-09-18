@@ -1,17 +1,18 @@
-package xyz.atom7.sharexspring.services
+package xyz.atom7.sharexspring.services.ratelimit
 
 import com.github.benmanes.caffeine.cache.Scheduler
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import xyz.atom7.sharexspring.config.properties.app.RateLimitProperties
 import xyz.atom7.sharexspring.security.ratelimit.impl.SlidingWindowLogRateLimiter
 import java.time.Duration
 
 @Service
-class RateLimiterActionService(
+class RateLimiterApiKeyService(
     rateLimitProperties: RateLimitProperties,
-    scheduler: Scheduler
+    @Qualifier("cacheCleanupScheduler") scheduler: Scheduler
 ) : SlidingWindowLogRateLimiter(
-    rateLimitProperties.action.maxRequests,
-    Duration.ofSeconds(rateLimitProperties.action.windowDuration),
+    rateLimitProperties.wrongApiKey.maxRequests,
+    Duration.ofSeconds(rateLimitProperties.wrongApiKey.windowDuration),
     scheduler
 )

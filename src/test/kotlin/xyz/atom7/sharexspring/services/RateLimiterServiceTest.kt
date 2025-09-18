@@ -4,16 +4,26 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestConstructor
+import org.springframework.test.context.bean.override.mockito.MockitoBean
+import xyz.atom7.sharexspring.BaseIntegrationTest
 import xyz.atom7.sharexspring.config.properties.app.RateLimitProperties
+import xyz.atom7.sharexspring.services.cache.CacheService
+import xyz.atom7.sharexspring.services.ratelimit.RateLimiterActionService
+import xyz.atom7.sharexspring.services.ratelimit.RateLimiterApiKeyService
 
 @SpringBootTest
+@ActiveProfiles("test")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 class RateLimiterServiceTest(
     private val rateLimitProperties: RateLimitProperties,
     private val rateLimiterActionService: RateLimiterActionService,
     private val rateLimiterApiKeyService: RateLimiterApiKeyService
-) {
+): BaseIntegrationTest() {
+
+    @MockitoBean
+    private lateinit var cacheService: CacheService
 
     @Test
     fun `should not reach rate limit initially for Actions`() {

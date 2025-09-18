@@ -8,8 +8,8 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
-import xyz.atom7.sharexspring.services.RateLimiterActionService
-import xyz.atom7.sharexspring.services.RateLimiterApiKeyService
+import xyz.atom7.sharexspring.services.ratelimit.RateLimiterActionService
+import xyz.atom7.sharexspring.services.ratelimit.RateLimiterApiKeyService
 
 @Component
 class RateLimitFilter(

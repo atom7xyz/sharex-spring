@@ -11,33 +11,7 @@ import xyz.atom7.sharexspring.annotations.aspects.Log
 class AppLogger {
 
     private val logger: Logger = LoggerFactory.getLogger(AppLogger::class.java)
-
-    private val DIV_MESSAGE: String = "########################################"
-
-    /**
-     * Prints a message to the logger based on the log level.
-     * @param logLevel The level of logging (INFO, WARN, ERROR).
-     * @param message The message to log.
-     */
-    fun print(logLevel: LogLevel, message: String) {
-        when (logLevel) {
-            LogLevel.INFO -> logger.info(message)
-            LogLevel.WARN -> logger.warn(message)
-            LogLevel.ERROR -> logger.error(message)
-        }
-    }
-
-    /**
-     * Prints a divider message to the logger based on the log level.
-     * @param logLevel The level of logging (INFO, WARN, ERROR).
-     */
-    fun div(logLevel: LogLevel) {
-        when (logLevel) {
-            LogLevel.INFO -> print(LogLevel.INFO, DIV_MESSAGE)
-            LogLevel.WARN -> print(LogLevel.WARN, DIV_MESSAGE)
-            LogLevel.ERROR -> print(LogLevel.ERROR, DIV_MESSAGE)
-        }
-    }
+    private val divMessage: String = "#".repeat(64)
 
     @After(value = "@annotation(logAnnotation)")
     fun log(joinPoint: JoinPoint, logAnnotation: Log) {
@@ -51,10 +25,39 @@ class AppLogger {
 
         // Include arguments if requested
         val argsInfo = if (logAnnotation.includeArgs && joinPoint.args.isNotEmpty()) {
-            " with args: ${joinPoint.args.joinToString { it?.toString() ?: "null" }}"
+            " (${joinPoint.args.joinToString { it?.toString() ?: "null" }})"
         } else ""
 
         logger.info("$action$argsInfo")
+    }
+
+    fun error(message: String) {
+        logger.error(message)
+    }
+
+    fun warning(message: String) {
+        logger.warn(message)
+    }
+
+    fun info(message: String) {
+        logger.info(message)
+    }
+
+    fun debug(message: String) {
+        logger.debug(message)
+    }
+
+    /**
+     * Prints a divider message to the logger based on the log level.
+     * @param logLevel The level of logging (INFO, WARN, ERROR).
+     */
+    fun div(logLevel: LogLevel) {
+        when (logLevel) {
+            LogLevel.INFO -> info(divMessage)
+            LogLevel.WARN -> warning(divMessage)
+            LogLevel.ERROR -> error(divMessage)
+            LogLevel.DEBUG -> debug(divMessage)
+        }
     }
 
 }

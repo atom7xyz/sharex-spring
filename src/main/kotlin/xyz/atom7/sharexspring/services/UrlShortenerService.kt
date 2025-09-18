@@ -1,14 +1,14 @@
 package xyz.atom7.sharexspring.services
 
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
-import org.springframework.web.server.ResponseStatusException
 import xyz.atom7.sharexspring.config.properties.app.LimitsProperties
 import xyz.atom7.sharexspring.config.properties.app.PublicProperties
 import xyz.atom7.sharexspring.domain.entities.ShortenedUrl
 import xyz.atom7.sharexspring.domain.repositories.UrlRepository
-import xyz.atom7.sharexspring.dto.ShortenUrlRequestDto
-import xyz.atom7.sharexspring.dto.ShortenUrlResponseDto
+import xyz.atom7.sharexspring.dto.request.ShortenedUrlRequestDto
+import xyz.atom7.sharexspring.dto.response.ShortenedUrlResponseDto
+import xyz.atom7.sharexspring.services.cache.CacheSection
+import xyz.atom7.sharexspring.services.cache.CacheService
 import xyz.atom7.sharexspring.utils.generateRandomString
 import java.util.*
 
@@ -16,45 +16,52 @@ import java.util.*
 class UrlShortenerService(
     private val urlRepository: UrlRepository,
     publicProperties: PublicProperties,
-    limitsProperties: LimitsProperties
+    limitsProperties: LimitsProperties,
+    private val cacheService: CacheService
 ) {
     private val shortenedUrls: String = publicProperties.shortenedUrls
     private val generatedNameLength: Int = limitsProperties.urlShortener.generatedNameLength
 
-    @Cacheable(value = ["shortenUrlReqDto"], key = "#dto")
-    fun shortenUrl(dto: ShortenUrlRequestDto): ShortenUrlResponseDto {
-        val urlFound = urlRepository.findShortenedUrlByOriginUrl(dto.url)
+    fun shortenUrl(
+        dto: ShortenedUrlRequestDto
+    ): ShortenedUrlResponseDto {
+        val cachedValue = cacheService.get(
+            CacheSection.SHORTENED_URL,
+            "origin->${dto.url}",
+            ShortenedUrl::class
+        )
 
-        if (urlFound.isPresent) {
-            return ShortenUrlResponseDto(
-                shortenedUrls + urlFound.get().targetUrl
-            )
+        if (cachedValue != null) {
+            return ShortenedUrlResponseDto(shortenedUrls + cachedValue.targetUrl)
         }
 
-        val shortenedUrl = ShortenedUrl(
+        val toSave = ShortenedUrl(
             originUrl = dto.url,
             targetUrl = findNonOccupiedUrl(generatedNameLength)
         )
+        val savedUrl = urlRepository.saveAndFlush(toSave)
+        cacheService.put(CacheSection.SHORTENED_URL, "target->${savedUrl.targetUrl}", savedUrl)
+        cacheService.put(CacheSection.SHORTENED_URL, "origin->${savedUrl.originUrl}", savedUrl)
 
-        urlRepository.save(shortenedUrl)
-
-        return ShortenUrlResponseDto(
-            shortenedUrls + shortenedUrl.targetUrl
-        )
+        return ShortenedUrlResponseDto(shortenedUrls + savedUrl.targetUrl)
     }
 
-    @Cacheable(value = ["targetUrls"], key = "#targetUrl")
-    @Throws(ResponseStatusException::class)
-    fun getUrl(targetUrl: String): Optional<ShortenedUrl> {
-        return urlRepository.findShortenedUrlByTargetUrl(targetUrl)
+    fun getUrl(targetUrl: String): Optional<ShortenedUrlResponseDto> {
+        val cachedValue = cacheService.get(
+            CacheSection.SHORTENED_URL,
+            "target->$targetUrl",
+            ShortenedUrl::class
+        ) ?: return Optional.empty()
+
+        return Optional.of(ShortenedUrlResponseDto(cachedValue.originUrl))
     }
 
     private fun findNonOccupiedUrl(length: Int): String {
-        var generated = generateRandomString(length)
+        var generated: String
 
-        while (getUrl(generated).isPresent) { // bypass of @Cacheable is intended, no cache pollution!
+        do {
             generated = generateRandomString(length)
-        }
+        } while (getUrl(generated).isPresent)
 
         return generated
     }

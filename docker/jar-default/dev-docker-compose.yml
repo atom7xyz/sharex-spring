@@ -1,7 +1,7 @@
 services:
 
   sharex-builder:
-    image: gradle:9.0.0-jdk21-alpine
+    image: 'gradle:9.0.0-jdk21-alpine'
     container_name: sharex-builder
     working_dir: /app
     volumes:
@@ -12,7 +12,7 @@ services:
     restart: "no"
 
   sharex-spring:
-    image: ghcr.io/graalvm/graalvm-community:21
+    image: 'ghcr.io/graalvm/graalvm-community:21'
     container_name: sharex-spring
     working_dir: /app
     volumes:
@@ -52,7 +52,6 @@ services:
       - SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE=1024MB
       - SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE=1024MB
       # APPLICATION SECURITY
-      - APP_SECURITY_API_KEY=changeme
       - APP_SECURITY_RATE_LIMIT_ACTION_MAX_REQUESTS=20
       - APP_SECURITY_RATE_LIMIT_ACTION_WINDOW_DURATION=10
       - APP_SECURITY_RATE_LIMIT_WRONG_API_KEY_MAX_REQUESTS=1
@@ -67,9 +66,6 @@ services:
       - APP_LIMITS_FILE_UPLOADER_SIZE=51200
       - APP_LIMITS_FILE_UPLOADER_ALLOWED_TYPES=image/jpeg,image/png,image/gif,application/pdf,text/plain,video/mp4
       - APP_LIMITS_URL_SHORTENER_GENERATED_NAME_LENGTH=4
-      # CACHING CONFIGURATION
-      - APP_CACHING_TTL=60
-      - APP_CACHING_MAXIMUM_SIZE=1000
     ports:
       - "8443:8443"
     command: ["java", "-jar", "./build/libs/sharex-spring-0.0.15.jar"]
@@ -93,7 +89,7 @@ services:
       - POSTGRES_PASSWORD=sharex_password
       - POSTGRES_DB=db_sharex
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - sharex_pgdata:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U sharex_user -d db_sharex"]
@@ -102,27 +98,26 @@ services:
       retries: 10
     hostname: "localhost"
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
 
   sharex-redis:
-    image: redis:7-alpine
+    image: 'redis:7-alpine'
     container_name: sharex-redis
     restart: unless-stopped
     volumes:
-      - redisdata:/data
-    ports:
-      - "6379:6379"
-    command: redis-server --appendonly yes
+      - sharex_redisdata:/data
+    command: redis-server --appendonly yes --requirepass sharex_redis_password
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD", "redis-cli", "-a", "sharex_redis_password", "ping"]
       interval: 5s
       timeout: 3s
       retries: 10
-    hostname: "localhost"
+    ports:
+      - "127.0.0.1:6379:6379"
 
 volumes:
-  pgdata:
-  redisdata:
+  sharex_pgdata:
+  sharex_redisdata:
 
 #networks:
 #  shared-nginx:

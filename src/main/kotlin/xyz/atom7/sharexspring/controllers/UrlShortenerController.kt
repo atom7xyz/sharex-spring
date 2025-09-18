@@ -7,9 +7,9 @@ import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.view.RedirectView
 import xyz.atom7.sharexspring.annotations.aspects.Log
-import xyz.atom7.sharexspring.dto.ShortenUrlRequestDto
-import xyz.atom7.sharexspring.dto.ShortenUrlResponseDto
-import xyz.atom7.sharexspring.exception.ShortenUrlNotFoundException
+import xyz.atom7.sharexspring.dto.request.ShortenedUrlRequestDto
+import xyz.atom7.sharexspring.dto.response.ShortenedUrlResponseDto
+import xyz.atom7.sharexspring.exception.impl.ShortenUrlNotFoundException
 import xyz.atom7.sharexspring.services.UrlShortenerService
 
 @RestController
@@ -22,7 +22,9 @@ class UrlShortenerController(
     @Log("URL Shortened", includeArgs = true)
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun shortenUrl(@Valid @RequestBody url: ShortenUrlRequestDto): ShortenUrlResponseDto {
+    fun shortenUrl(
+        @Valid @RequestBody url: ShortenedUrlRequestDto
+    ): ShortenedUrlResponseDto {
         return urlShortenerService.shortenUrl(url)
     }
 
@@ -32,13 +34,11 @@ class UrlShortenerController(
         @PathVariable
         @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Invalid URL format")
         url: String
-    ): Any {
+    ): RedirectView {
         val target = urlShortenerService.getUrl(url)
-            .takeIf { it.isPresent }
-            ?.let { urlShortenerService.getUrl(url).get().originUrl }
-            ?: throw ShortenUrlNotFoundException("Redirection for this link brings nowhere!")
+            .orElseThrow { ShortenUrlNotFoundException() }
 
-        return RedirectView(target)
+        return RedirectView(target.url)
     }
 
 }

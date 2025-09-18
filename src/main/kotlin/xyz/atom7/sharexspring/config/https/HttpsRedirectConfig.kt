@@ -1,4 +1,4 @@
-package xyz.atom7.sharexspring.config
+package xyz.atom7.sharexspring.config.https
 
 import org.apache.catalina.connector.Connector
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory

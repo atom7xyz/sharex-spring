@@ -7,4 +7,5 @@ import java.util.*
 interface UrlRepository : JpaRepository<ShortenedUrl, Long> {
     fun findShortenedUrlByOriginUrl(originUrl: String): Optional<ShortenedUrl>
     fun findShortenedUrlByTargetUrl(targetUrl: String): Optional<ShortenedUrl>
+    fun findAllByOrderByHitsAsc(): Iterable<ShortenedUrl>
 }

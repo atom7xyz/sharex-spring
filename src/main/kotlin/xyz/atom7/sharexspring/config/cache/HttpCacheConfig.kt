@@ -21,9 +21,7 @@ class HttpCacheConfig(
     @Bean
     fun httpCacheInterceptor(): WebContentInterceptor {
         val interceptor = WebContentInterceptor()
-
         interceptor.addCacheMapping(cacheControl, "/share/s/**", "/share/u/**")
-
         return interceptor
     }
 

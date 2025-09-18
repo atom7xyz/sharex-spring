@@ -1,10 +1,10 @@
 plugins {
-    kotlin("jvm") version "2.2.20-Beta2"
-    kotlin("plugin.spring") version "2.2.20-Beta2"
+    kotlin("jvm") version "2.2.20"
+    kotlin("plugin.spring") version "2.2.20"
     id("org.springframework.boot") version "3.4.1"
     id("io.spring.dependency-management") version "1.1.7"
+    id("org.jetbrains.kotlin.plugin.jpa") version "2.2.20"
     // id("org.graalvm.buildtools.native") version "0.11.0"
-    id("org.jetbrains.kotlin.plugin.jpa") version "2.2.20-Beta2"
 }
 
 group = "xyz.atom7"
@@ -41,6 +41,15 @@ dependencies {
     testImplementation("org.mockito:mockito-core:5.18.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.13.1")
+    implementation("commons-codec:commons-codec:1.19.0")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    implementation("com.auth0:java-jwt:4.5.0")
+
+    // Testcontainers
+    testImplementation("org.testcontainers:testcontainers:1.21.3")
+    testImplementation("org.testcontainers:junit-jupiter:1.21.3")
+    testImplementation("org.testcontainers:postgresql:1.21.3")
+    testImplementation("com.redis:testcontainers-redis:2.2.4")
 }
 
 kotlin {
@@ -51,6 +60,15 @@ kotlin {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.withType<JavaCompile> {
+    options.isFork = true
+    options.isIncremental = true
+}
+
+tasks.withType<org.springframework.boot.gradle.tasks.bundling.BootJar> {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 // graalvmNative {
@@ -84,12 +102,3 @@ tasks.withType<Test> {
 //         }
 //     }
 // }
-
-tasks.withType<JavaCompile> {
-    options.isFork = true
-    options.isIncremental = true
-}
-
-tasks.withType<org.springframework.boot.gradle.tasks.bundling.BootJar> {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-}

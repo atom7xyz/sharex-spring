@@ -69,6 +69,8 @@ server:
     client-auth: none  # "none", "want", or "need"
 
 spring:
+  config:
+    import: optional:file:.env[.properties]
   datasource:
     url: jdbc:postgresql://localhost:5432/db_sharex
     driverClassName: org.postgresql.Driver
@@ -82,26 +84,35 @@ spring:
     redis:
       host: localhost
       port: 6379
-      password:
+      password: sharex_redis_password
       database: 0
   servlet:
     multipart:
       max-file-size: 1024MB
       max-request-size: 1024MB
 
+management:
+  health:
+    diskspace:
+      enabled: true
+      path: .
+      #
+      # The "threshold" indicates the minimum amount of free space needed for the application to work.
+      # (if the space is not enough, the upload of new files by the clients will be denied)
+      #
+      threshold: 10MB
+
 app:
   security:
 
     #
-    # The api-key should be a random string and should be shared only with people
-    #   who you trust with uploading/sharing files into your server.
+    # Authentication via JWT used for password-protected files.
+    # The .env file is used to read the secret to sign the token.
     #
-    # The API KEY is required only when creating shorten-URLs and uploading files, not for the accessing them.
-    #
-    # Generate a random API KEY here:
-    # https://www.random.org/strings/?num=1&len=32&digits=on&upperalpha=on&loweralpha=on&unique=on&format=html&rnd=new
-    #
-    api-key: "changeme"
+    jwt:
+      secret: ${JWT_SECRET:generated}
+      expiration: 180 # in minutes
+      algorithm: HMAC256
 
     #
     # This server uses 2 rate-limiters:
@@ -175,9 +186,10 @@ app:
       generated-name-length: 4
 
   #
-  # Caching configuration, used for caching of the shortened URLs.
-  # The default value (60 minutes) should be sufficient for most use cases.
+  # Caching configuration.
   #
   caching:
+    #
+    # Tells the client to cache the file for the amount of minutes (default: 60 minutes).
+    #
     ttl: 60 # in minutes
-    maximumSize: 1000
