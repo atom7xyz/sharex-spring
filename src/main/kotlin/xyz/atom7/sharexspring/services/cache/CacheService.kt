@@ -44,6 +44,7 @@ class CacheService(
         cache.put(key as Any, value)
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <K, T : Any> get(
         section: CacheSection,
         key: K,
