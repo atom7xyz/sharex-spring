@@ -4,8 +4,8 @@ enum class CacheSection(val value: String) {
     PROFILE("profile"),
     FILE_UPLOAD("file_upload"),
 
-    // md5 -> id
-    FILE_UPLOAD_MD5("file_upload_md5"),
+    // hash -> id
+    FILE_UPLOAD_HASH("file_upload_hash"),
 
     // path -> id
     FILE_UPLOAD_PATH("file_upload_path"),

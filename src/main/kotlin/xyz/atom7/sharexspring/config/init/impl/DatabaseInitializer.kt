@@ -1,9 +1,8 @@
-package xyz.atom7.sharexspring.config.init
+package xyz.atom7.sharexspring.config.init.impl
 
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.ApplicationEventPublisher
-import org.springframework.context.event.EventListener
-import org.springframework.stereotype.Component
+import xyz.atom7.sharexspring.config.init.EventListenerInitializer
 import xyz.atom7.sharexspring.domain.entities.Profile
 import xyz.atom7.sharexspring.domain.entities.UserRole
 import xyz.atom7.sharexspring.domain.repositories.ProfileRepository
@@ -15,27 +14,27 @@ import xyz.atom7.sharexspring.services.cache.CacheService
 import xyz.atom7.sharexspring.services.security.hash.DigestService
 import xyz.atom7.sharexspring.utils.generateRandomString
 
-@Component
 class DatabaseInitializer(
+    logger: AppLogger,
     private val profileRepository: ProfileRepository,
     private val digestService: DigestService,
-    private val logger: AppLogger,
-    private val applicationEventPublisher: ApplicationEventPublisher,
-    private val cacheService: CacheService
-) {
+    private val cacheService: CacheService,
+    private val applicationEventPublisher: ApplicationEventPublisher
+): EventListenerInitializer<ApplicationReadyEvent>(logger) {
 
-    @EventListener(ApplicationReadyEvent::class)
-    fun initializeDatabase() {
+    override val clazz = ApplicationReadyEvent::class
+
+    override fun init() {
         createAdminUserIfNotExists()
         applicationEventPublisher.publishEvent(DatabaseInitializedEvent(this))
     }
 
-    private fun createAdminUserIfNotExists() {
-        if (profileRepository.existsUserByRole(UserRole.ADMIN)) {
-            return
-        }
+    override fun shouldInit(): Boolean {
+        return !profileRepository.existsUserByRole(UserRole.ADMIN)
+    }
 
-        val adminApiKey = generateAdminApiKey()
+    private fun createAdminUserIfNotExists() {
+        val adminApiKey = generateRandomString(32)
         val salt = digestService.generateSalt(16)
         val hashedKey = digestService.hashSaltApiKey(adminApiKey, salt)
 
@@ -52,10 +51,6 @@ class DatabaseInitializer(
         logger.warning("X-API-USER: \t${profile.id}")
         logger.warning("X-API-KEY: \t$adminApiKey")
         logger.div(LogLevel.WARN)
-    }
-
-    private fun generateAdminApiKey(): String {
-        return generateRandomString(32)
     }
 
 }

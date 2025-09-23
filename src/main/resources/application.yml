@@ -71,6 +71,11 @@ server:
 spring:
   config:
     import: optional:file:.env[.properties]
+  security:
+    user:
+      name: admin
+      password: ${SPRING_SECURITY_PASSWORD:secret-will-be-generated-at-launch!}
+      roles: ADMIN
   datasource:
     url: jdbc:postgresql://localhost:5432/db_sharex
     driverClassName: org.postgresql.Driver
@@ -110,7 +115,7 @@ app:
     # The .env file is used to read the secret to sign the token.
     #
     jwt:
-      secret: ${JWT_SECRET:generated}
+      secret: ${JWT_SECRET:secret-will-be-generated-at-launch!}
       expiration: 180 # in minutes
       algorithm: HMAC256
 
@@ -192,4 +197,4 @@ app:
     #
     # Tells the client to cache the file for the amount of minutes (default: 60 minutes).
     #
-    ttl: 60 # in minutes
+    ttl: 180 # in minutes

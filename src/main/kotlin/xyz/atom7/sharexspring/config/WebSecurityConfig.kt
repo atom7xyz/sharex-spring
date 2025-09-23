@@ -21,18 +21,17 @@ class WebSecurityConfig(
                     channel.anyRequest().requiresSecure()
                 }
             }
-            .csrf { csrf -> csrf.disable() }
             .authorizeHttpRequests {
-                it.requestMatchers(
-                    "/share/s",
-                    "/share/s/*",
-                    "/share/u",
-                    "/share/u/*",
-                    "/actuator/**"
-                ).permitAll()
-
-                it.anyRequest().permitAll() // temp
+                it.requestMatchers("/share/s", "/share/s/*")
+                    .permitAll()
+                it.requestMatchers("/share/u", "/share/u/*")
+                    .permitAll()
+                it.requestMatchers("/actuator/**")
+                    .hasRole("ADMIN")
+                    .anyRequest()
+                    .authenticated()
             }
+            .httpBasic { }
         return http.build()
     }
 

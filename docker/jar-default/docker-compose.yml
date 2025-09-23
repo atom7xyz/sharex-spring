@@ -60,7 +60,7 @@ services:
       - APP_LIMITS_FILE_UPLOADER_ALLOWED_TYPES=image/jpeg,image/png,image/gif,application/pdf,text/plain,video/mp4
       - APP_LIMITS_URL_SHORTENER_GENERATED_NAME_LENGTH=4
       # CACHING CONFIGURATION
-      - APP_CACHING_TTL=180
+      - APP_CACHING_TTL=60
     ports:
       - "8443:8443"
     command: ["java", "-jar", "sharex-spring-0.0.16-default.jar"]

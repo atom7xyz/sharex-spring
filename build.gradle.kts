@@ -44,6 +44,7 @@ dependencies {
     implementation("commons-codec:commons-codec:1.19.0")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("com.auth0:java-jwt:4.5.0")
+    implementation("io.github.cdimascio:dotenv-kotlin:6.5.1")
 
     // Testcontainers
     testImplementation("org.testcontainers:testcontainers:1.21.3")

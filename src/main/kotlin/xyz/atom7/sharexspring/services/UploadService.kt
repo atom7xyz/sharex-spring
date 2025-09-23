@@ -72,7 +72,7 @@ class UploadService(
         val file = requestDto.file
         val fileHash = digestService.hash(file, HashingAlgorithm.MD5)
         val existsInCache = cacheService.get(
-            CacheSection.FILE_UPLOAD_MD5,
+            CacheSection.FILE_UPLOAD_HASH,
             fileHash,
             String::class
         )
@@ -101,11 +101,11 @@ class UploadService(
 
         val toSave = FileUpload(
             path = fileName,
-            md5 = fileHash,
+            hash = fileHash,
             uploadedBy = profile
         )
         val savedFile = fileRepository.saveAndFlush(toSave)
-        cacheService.put(CacheSection.FILE_UPLOAD_MD5, savedFile.md5, savedFile.id)
+        cacheService.put(CacheSection.FILE_UPLOAD_HASH, savedFile.hash, savedFile.id)
         cacheService.put(CacheSection.FILE_UPLOAD_PATH, savedFile.path, savedFile.id)
         cacheService.put(CacheSection.FILE_UPLOAD, savedFile.id, savedFile)
 

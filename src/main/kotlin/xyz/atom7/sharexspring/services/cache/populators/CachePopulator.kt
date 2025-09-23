@@ -43,9 +43,9 @@ class CachePopulator(
             }
         }
 
-        populate<Cache>(redisCacheManager, CacheSection.FILE_UPLOAD_MD5) { cache ->
+        populate<Cache>(redisCacheManager, CacheSection.FILE_UPLOAD_HASH) { cache ->
             fileRepository.findAll().forEach { file ->
-                cache.put(file.md5, file.id)
+                cache.put(file.hash, file.id)
             }
         }
 
@@ -67,7 +67,7 @@ class CachePopulator(
         cleanup(redisCacheManager, CacheSection.SHORTENED_URL)
         cleanup(redisCacheManager, CacheSection.PROFILE)
         cleanup(redisCacheManager, CacheSection.FILE_UPLOAD)
-        cleanup(redisCacheManager, CacheSection.FILE_UPLOAD_MD5)
+        cleanup(redisCacheManager, CacheSection.FILE_UPLOAD_HASH)
         cleanup(redisCacheManager, CacheSection.FILE_UPLOAD_PATH)
         cleanup(caffeineCacheManager, CacheSection.API_KEY)
     }

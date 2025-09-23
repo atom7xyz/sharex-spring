@@ -21,7 +21,7 @@ data class FileUpload(
     val path: String,
 
     @Column(nullable = false, unique = true)
-    val md5: String,
+    val hash: String,
 
     @CreationTimestamp(source = SourceType.DB)
     @param:JsonSerialize(using = LocalDateTimeSerializer::class)
@@ -41,7 +41,7 @@ data class FileUpload(
 ) {
 
     override fun toString(): String {
-        return "FileUpload(passwordHash=$passwordHash, passwordSalt=$passwordSalt, uploadDate=$uploadDate, md5='$md5', path='$path', id=$id)"
+        return "FileUpload(passwordHash=$passwordHash, passwordSalt=$passwordSalt, uploadDate=$uploadDate, hash='$hash', path='$path', id=$id)"
     }
 
 }

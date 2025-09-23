@@ -142,7 +142,7 @@ class UploadServiceTest(
         val fileUpload = FileUpload(
             id = fileUploadUUID,
             path = "somePath.txt",
-            md5 = "CY9rzUYh03PK3k6DJie09g==",
+            hash = "CY9rzUYh03PK3k6DJie09g==",
             uploadDate = null,
             uploadedBy = profile,
             passwordHash = null,
@@ -156,8 +156,8 @@ class UploadServiceTest(
         }.willReturn(profile)
 
         given { cacheService.get(
-            CacheSection.FILE_UPLOAD_MD5,
-            fileUpload.md5,
+            CacheSection.FILE_UPLOAD_HASH,
+            fileUpload.hash,
             String::class)
         }.willReturn(fileId)
 
@@ -199,7 +199,7 @@ class UploadServiceTest(
         val fileUpload = FileUpload(
             id = fileUploadUUID,
             path = "somePath.txt",
-            md5 = "CY9rzUYh03PK3k6DJie09g==",
+            hash = "CY9rzUYh03PK3k6DJie09g==",
             uploadDate = null,
             uploadedBy = profile,
             passwordHash = null,
@@ -213,8 +213,8 @@ class UploadServiceTest(
         }.willReturn(profile)
 
         given { cacheService.get(
-            CacheSection.FILE_UPLOAD_MD5,
-            fileUpload.md5,
+            CacheSection.FILE_UPLOAD_HASH,
+            fileUpload.hash,
             String::class)
         }.willReturn(fileId)
 
@@ -250,11 +250,10 @@ class UploadServiceTest(
         )
 
         val fileUploadUUID = UUID.randomUUID()
-        val fileId = fileUploadUUID.toString()
         val fileUpload = FileUpload(
             id = fileUploadUUID,
             path = "somePath.txt",
-            md5 = "CY9rzUYh03PK3k6DJie09g==",
+            hash = "CY9rzUYh03PK3k6DJie09g==",
             uploadDate = null,
             uploadedBy = profile,
             passwordHash = null,
@@ -268,8 +267,8 @@ class UploadServiceTest(
         }.willReturn(profile)
 
         given { cacheService.get(
-            CacheSection.FILE_UPLOAD_MD5,
-            fileUpload.md5,
+            CacheSection.FILE_UPLOAD_HASH,
+            fileUpload.hash,
             String::class)
         }.willReturn(null)
 
@@ -301,11 +300,10 @@ class UploadServiceTest(
         )
 
         val fileUploadUUID = UUID.randomUUID()
-        val fileId = fileUploadUUID.toString()
         val fileUpload = FileUpload(
             id = fileUploadUUID,
             path = "somePath.txt",
-            md5 = "CY9rzUYh03PK3k6DJie09g==",
+            hash = "CY9rzUYh03PK3k6DJie09g==",
             uploadDate = null,
             uploadedBy = profile,
             passwordHash = null,
@@ -319,8 +317,8 @@ class UploadServiceTest(
         }.willReturn(profile)
 
         given { cacheService.get(
-            CacheSection.FILE_UPLOAD_MD5,
-            fileUpload.md5,
+            CacheSection.FILE_UPLOAD_HASH,
+            fileUpload.hash,
             String::class)
         }.willReturn(null)
 
@@ -359,11 +357,10 @@ class UploadServiceTest(
         )
 
         val fileUploadUUID = UUID.randomUUID()
-        val fileId = fileUploadUUID.toString()
         val fileUpload = FileUpload(
             id = fileUploadUUID,
             path = "somePath.txt",
-            md5 = "CY9rzUYh03PK3k6DJie09g==",
+            hash = "CY9rzUYh03PK3k6DJie09g==",
             uploadDate = null,
             uploadedBy = profile,
             passwordHash = null,
@@ -377,8 +374,8 @@ class UploadServiceTest(
         }.willReturn(profile)
 
         given { cacheService.get(
-            CacheSection.FILE_UPLOAD_MD5,
-            fileUpload.md5,
+            CacheSection.FILE_UPLOAD_HASH,
+            fileUpload.hash,
             String::class)
         }.willReturn(null)
 
@@ -397,28 +394,6 @@ class UploadServiceTest(
     @Test
     fun `getFile should reject the request due to file not found in cache (FILE_UPLOAD_PATH cache)`() {
         val userInput = "example.txt"
-
-        val userUUID = UUID.randomUUID()
-        val userId = userUUID.toString()
-        val profile = Profile(
-            id = userUUID,
-            role = UserRole.USER,
-            keyHash = "none",
-            keySalt = "none",
-            active = true
-        )
-
-        val fileUploadUUID = UUID.randomUUID()
-        val fileId = fileUploadUUID.toString()
-        val fileUpload = FileUpload(
-            id = fileUploadUUID,
-            path = "somePath.txt",
-            md5 = "CY9rzUYh03PK3k6DJie09g==",
-            uploadDate = null,
-            uploadedBy = profile,
-            passwordHash = null,
-            passwordSalt = null
-        )
 
         given { cacheService.get(
             CacheSection.FILE_UPLOAD_PATH,
@@ -440,7 +415,6 @@ class UploadServiceTest(
         val userInput = "example.txt"
 
         val userUUID = UUID.randomUUID()
-        val userId = userUUID.toString()
         val profile = Profile(
             id = userUUID,
             role = UserRole.USER,
@@ -450,11 +424,10 @@ class UploadServiceTest(
         )
 
         val fileUploadUUID = UUID.randomUUID()
-        val fileId = fileUploadUUID.toString()
         val fileUpload = FileUpload(
             id = fileUploadUUID,
             path = "somePath.txt",
-            md5 = "CY9rzUYh03PK3k6DJie09g==",
+            hash = "CY9rzUYh03PK3k6DJie09g==",
             uploadDate = null,
             uploadedBy = profile,
             passwordHash = null,
@@ -487,7 +460,6 @@ class UploadServiceTest(
         val userInput = "../../../../example.txt"
 
         val userUUID = UUID.randomUUID()
-        val userId = userUUID.toString()
         val profile = Profile(
             id = userUUID,
             role = UserRole.USER,
@@ -497,11 +469,10 @@ class UploadServiceTest(
         )
 
         val fileUploadUUID = UUID.randomUUID()
-        val fileId = fileUploadUUID.toString()
         val fileUpload = FileUpload(
             id = fileUploadUUID,
             path = "somePath.txt",
-            md5 = "CY9rzUYh03PK3k6DJie09g==",
+            hash = "CY9rzUYh03PK3k6DJie09g==",
             uploadDate = null,
             uploadedBy = profile,
             passwordHash = null,
@@ -534,7 +505,6 @@ class UploadServiceTest(
         val userInput = "example.txt"
 
         val userUUID = UUID.randomUUID()
-        val userId = userUUID.toString()
         val profile = Profile(
             id = userUUID,
             role = UserRole.USER,
@@ -544,11 +514,10 @@ class UploadServiceTest(
         )
 
         val fileUploadUUID = UUID.randomUUID()
-        val fileId = fileUploadUUID.toString()
         val fileUpload = FileUpload(
             id = fileUploadUUID,
             path = "somePath.txt",
-            md5 = "CY9rzUYh03PK3k6DJie09g==",
+            hash = "CY9rzUYh03PK3k6DJie09g==",
             uploadDate = null,
             uploadedBy = profile,
             passwordHash = null,
@@ -581,7 +550,6 @@ class UploadServiceTest(
         val userInput = "example.txt"
 
         val userUUID = UUID.randomUUID()
-        val userId = userUUID.toString()
         val profile = Profile(
             id = userUUID,
             role = UserRole.USER,
@@ -591,11 +559,10 @@ class UploadServiceTest(
         )
 
         val fileUploadUUID = UUID.randomUUID()
-        val fileId = fileUploadUUID.toString()
         val fileUpload = FileUpload(
             id = fileUploadUUID,
             path = "somePath.txt",
-            md5 = "CY9rzUYh03PK3k6DJie09g==",
+            hash = "CY9rzUYh03PK3k6DJie09g==",
             uploadDate = null,
             uploadedBy = profile,
             passwordHash = null,

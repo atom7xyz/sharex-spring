@@ -60,4 +60,8 @@ class AppLogger {
         }
     }
 
+    fun printDiv() {
+        println(divMessage)
+    }
+
 }

@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer
 import org.springframework.data.redis.serializer.RedisSerializationContext
 import org.springframework.data.redis.serializer.StringRedisSerializer
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
 
 @Configuration
 class SerializationConfig {
@@ -26,6 +28,11 @@ class SerializationConfig {
         return RedisSerializationContext.SerializationPair.fromSerializer(
             StringRedisSerializer()
         )
+    }
+
+    @Bean
+    fun passwordEncoder(): PasswordEncoder {
+        return BCryptPasswordEncoder()
     }
 
 }
