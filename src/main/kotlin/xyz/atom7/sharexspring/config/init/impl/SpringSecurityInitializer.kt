@@ -28,7 +28,7 @@ class SpringSecurityInitializer(
 
     override fun shouldInit(): Boolean {
         val value = dotEnvService.read(key)
-        return value == "secret-will-be-generated-at-launch!"
+        return value == "secret-will-be-generated-at-launch!" || value.isEmpty()
     }
 
 }
