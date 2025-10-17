@@ -26,11 +26,14 @@ class DatabaseInitializer(
 
     override fun init() {
         createAdminUserIfNotExists()
-        applicationEventPublisher.publishEvent(DatabaseInitializedEvent(this))
     }
 
     override fun shouldInit(): Boolean {
         return !profileRepository.existsUserByRole(UserRole.ADMIN)
+    }
+
+    override fun then() {
+        applicationEventPublisher.publishEvent(DatabaseInitializedEvent(this))
     }
 
     private fun createAdminUserIfNotExists() {
@@ -44,7 +47,6 @@ class DatabaseInitializer(
             keySalt = salt,
         )
         val profile = profileRepository.saveAndFlush(toSave)
-        cacheService.put(CacheSection.PROFILE, profile.id, profile)
 
         logger.div(LogLevel.WARN)
         logger.warning("IMPORTANT! SAVE THESE CREDENTIALS FOR THE ADMIN ACCESS!")

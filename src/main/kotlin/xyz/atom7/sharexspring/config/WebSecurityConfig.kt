@@ -22,16 +22,18 @@ class WebSecurityConfig(
                 }
             }
             .authorizeHttpRequests {
-                it.requestMatchers("/share/s", "/share/s/*")
-                    .permitAll()
-                it.requestMatchers("/share/u", "/share/u/*")
-                    .permitAll()
-                it.requestMatchers("/actuator/**")
-                    .hasRole("ADMIN")
-                    .anyRequest()
-                    .authenticated()
+                it.requestMatchers("/share/u", "/share/u/**").permitAll()
+                it.requestMatchers("/share/s", "/share/s/**").permitAll()
+                it.requestMatchers("/actuator/**").hasRole("ADMIN")
+                it.anyRequest().authenticated()
             }
             .httpBasic { }
+            .csrf {
+                it.ignoringRequestMatchers(
+                    "/share/s/**",
+                    "/share/u/**"
+                )
+            }
         return http.build()
     }
 

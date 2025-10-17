@@ -27,4 +27,6 @@ class JwtInitializer(
         return readValue == "secret-will-be-generated-at-launch!" || readValue.length < 32
     }
 
+    override fun then() { }
+
 }

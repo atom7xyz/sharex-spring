@@ -31,4 +31,6 @@ class SpringSecurityInitializer(
         return value == "secret-will-be-generated-at-launch!" || value.isEmpty()
     }
 
+    override fun then() { }
+
 }

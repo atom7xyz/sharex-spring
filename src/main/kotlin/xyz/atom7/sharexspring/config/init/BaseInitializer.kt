@@ -10,6 +10,7 @@ abstract class BaseInitializer(
         if (shouldInit()) {
             init()
         }
+        then()
     }
 
 }
