@@ -1,0 +1,1 @@
+ALTER TABLE file_upload RENAME COLUMN md5 TO hash;

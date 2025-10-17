@@ -22,17 +22,23 @@ class JwtService(
         }
     }
 
-    fun generateFileToken(filePath: String, user: String): String {
-        return JWT.create()
-            .withSubject(user)
-            .withClaim("filePath", filePath)
-            .withIssuedAt(Date())
-            .withExpiresAt(Date(System.currentTimeMillis() + expirationMillis))
-            .sign(algorithm)
+    fun generateFilePathToken(user: String, filePath: String): String {
+        return generateToken(user, mapOf(Pair("filePath", filePath)))
     }
 
-    fun extractFileId(token: String): String? {
+    fun extractFilePath(token: String): String? {
         return validateToken(token)?.getClaim("filePath")?.asString()
+    }
+
+    private fun generateToken(user: String, map: Map<String, String>): String {
+        val builder = JWT.create()
+            .withSubject(user)
+            .withIssuedAt(Date())
+            .withExpiresAt(Date(System.currentTimeMillis() + expirationMillis))
+
+        map.forEach { (key, value) -> builder.withClaim(key, value) }
+
+        return builder.sign(algorithm)
     }
 
 }
