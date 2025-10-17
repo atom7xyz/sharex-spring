@@ -70,7 +70,7 @@ services:
       - APP_CACHING_TTL=60
     ports:
       - "8443:8443"
-    command: ["java", "-jar", "./build/libs/sharex-spring-0.0.16-default.jar"]
+    command: ["java", "-jar", "./build/libs/sharex-spring-0.0.17-default.jar"]
     restart: unless-stopped
     user: "1000:1000"
     depends_on:
