@@ -88,6 +88,7 @@ spring:
   flyway:
     enabled: true
     baseline-version: 1
+    baseline-on-migrate: true
   data:
     redis:
       host: localhost
